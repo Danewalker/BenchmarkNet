@@ -21,6 +21,7 @@ Supported networking libraries:
 - [Hazel](https://github.com/DarkRiftNetworking/Hazel-Networking "Hazel")
 - [Photon](https://www.photonengine.com/en/OnPremise "Photon")
 - [Neutrino](https://github.com/Claytonious/Neutrino)
+- [DarkRift](https://darkriftnetworking.com/DarkRift2)
 
 You can find the latest benchmark results on the [wiki page](https://github.com/nxrighthere/BenchmarkNet/wiki/Benchmark-Results).
 
