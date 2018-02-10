@@ -1543,10 +1543,10 @@ namespace BenchmarkNet {
 						using (DarkRiftReader reader = message.GetReader()) {
 							if (data.SendMode == SendMode.Reliable) {
 								Interlocked.Increment(ref serverReliableReceived);
-								Interlocked.Add(ref serverReliableBytesReceived, reader.ReadBytes().Length);
+								Interlocked.Add(ref serverReliableBytesReceived, reader.Length);
 
 								using (DarkRiftWriter writer = DarkRiftWriter.Create(messageData.Length)) {
-									writer.Write(messageData);
+									writer.WriteRaw(messageData, 0, messageData.Length);
 
 									using (Message reliableMessage = Message.Create(0, writer))
 										data.Client.SendMessage(reliableMessage, SendMode.Reliable);
@@ -1556,10 +1556,10 @@ namespace BenchmarkNet {
 								Interlocked.Add(ref serverReliableBytesSent, messageData.Length);
 							} else if (data.SendMode == SendMode.Unreliable) {
 								Interlocked.Increment(ref serverUnreliableReceived);
-								Interlocked.Add(ref serverUnreliableBytesReceived, reader.ReadBytes().Length);
+								Interlocked.Add(ref serverUnreliableBytesReceived, reader.Length);
 
 								using (DarkRiftWriter writer = DarkRiftWriter.Create(messageData.Length)) {
-									writer.Write(messageData);
+									writer.WriteRaw(messageData, 0, messageData.Length);
 
 									using (Message unreliableMessage = Message.Create(0, writer))
 										data.Client.SendMessage(unreliableMessage, SendMode.Unreliable);
@@ -1597,7 +1597,7 @@ namespace BenchmarkNet {
 					while (processActive) {
 						if (reliableToSend > 0) {
 							using (DarkRiftWriter writer = DarkRiftWriter.Create(messageData.Length)) {
-								writer.Write(messageData);
+								writer.WriteRaw(messageData, 0, messageData.Length);
 
 								using (Message message = Message.Create(0, writer))
 									client.SendMessage(message, SendMode.Reliable);
@@ -1611,7 +1611,7 @@ namespace BenchmarkNet {
 
 						if (unreliableToSend > 0) {
 							using (DarkRiftWriter writer = DarkRiftWriter.Create(messageData.Length)) {
-								writer.Write(messageData);
+								writer.WriteRaw(messageData, 0, messageData.Length);
 
 								using (Message message = Message.Create(0, writer))
 									client.SendMessage(message, SendMode.Unreliable);
@@ -1654,10 +1654,10 @@ namespace BenchmarkNet {
 						using (DarkRiftReader reader = message.GetReader()) {
 							if (data.SendMode == SendMode.Reliable) {
 								Interlocked.Increment(ref clientsReliableReceived);
-								Interlocked.Add(ref clientsReliableBytesReceived, reader.ReadBytes().Length);
+								Interlocked.Add(ref clientsReliableBytesReceived, reader.Length);
 							} else if (data.SendMode == SendMode.Unreliable) {
 								Interlocked.Increment(ref clientsUnreliableReceived);
-								Interlocked.Add(ref clientsUnreliableBytesReceived, reader.ReadBytes().Length);
+								Interlocked.Add(ref clientsUnreliableBytesReceived, reader.Length);
 							}
 						}
 					}
