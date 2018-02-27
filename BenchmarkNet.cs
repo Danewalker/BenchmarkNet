@@ -58,7 +58,6 @@ namespace BenchmarkNet {
 		// Meta
 		protected const string title = "BenchmarkNet";
 		protected const string version = "1.06";
-		
 		// Parameters
 		protected const string ip = "127.0.0.1";
 		protected static ushort port = 0;
@@ -68,29 +67,23 @@ namespace BenchmarkNet {
 		protected static int sendRate = 0;
 		protected static int reliableMessages = 0;
 		protected static int unreliableMessages = 0;
-		
 		// Data
 		protected static string message = String.Empty;
 		protected static char[] reversedMessage;
 		protected static byte[] messageData;
 		protected static byte[] reversedData;
-		
 		// Status
 		protected static bool processActive = false;
 		protected static bool processCompleted = false;
 		protected static bool processOverload = false;
 		protected static bool processFailure = false;
-		
 		// Modes
 		protected static bool instantMode = false;
 		protected static bool lowLatencyMode = false;
-		
 		// Passes
 		protected static bool maxClientsPass = true;
-		
 		// Threads
 		protected static Thread serverThread;
-		
 		// Info
 		protected static volatile int clientsStartedCount = 0;
 		protected static volatile int clientsConnectedCount = 0;
@@ -112,7 +105,6 @@ namespace BenchmarkNet {
 		protected static volatile int clientsUnreliableReceived = 0;
 		protected static volatile int clientsUnreliableBytesSent = 0;
 		protected static volatile int clientsUnreliableBytesReceived = 0;
-		
 		// Internals
 		private static ushort maxPeers = 0;
 		private static byte selectedLibrary = 0;
@@ -128,7 +120,6 @@ namespace BenchmarkNet {
 			"Neutrino",
 			"DarkRift"
 		};
-
 		// Functions
 		private static Func<int, string> Space = (value) => (String.Empty.PadRight(value));
 		private static Func<int, decimal, decimal, decimal> PayloadFlow = (clientsChannelsCount, messageLength, sendRate) => (clientsChannelsCount * (messageLength * sendRate * 2) * 8 / (1000 * 1000)) * 2;
@@ -585,6 +576,7 @@ namespace BenchmarkNet {
 			topology.ReceivedMessagePoolSize = ushort.MaxValue;
 
 			NetLibraryManager server = new NetLibraryManager(globalConfig);
+			
 			int host = server.AddHost(topology, port, ip);
 
 			int hostID, connectionID, channelID, dataLength;
@@ -627,6 +619,7 @@ namespace BenchmarkNet {
 				int unreliableChannel = connectionConfig.AddChannel(QosType.UnreliableSequenced);
 				
 				NetLibraryManager client = new NetLibraryManager();
+				
 				int host = client.AddHost(new HostTopology(connectionConfig, 1), 0, null);
 				
 				byte connectionError;
