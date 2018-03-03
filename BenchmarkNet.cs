@@ -84,7 +84,7 @@ namespace BenchmarkNet {
 		protected static bool maxClientsPass = true;
 		// Threads
 		protected static Thread serverThread;
-		// Info
+		// Stats
 		protected static volatile int clientsStartedCount = 0;
 		protected static volatile int clientsConnectedCount = 0;
 		protected static volatile int clientsChannelsCount = 0;
@@ -232,7 +232,7 @@ namespace BenchmarkNet {
 			if (selectedLibrary == 0)
 				ENet.Library.Initialize();
 
-			maxPeers = ushort.MaxValue;
+			maxPeers = ushort.MaxValue - 1;
 			maxClientsPass = (selectedLibrary > 0 ? maxClients <= maxPeers : maxClients <= ENet.Native.ENET_PROTOCOL_MAXIMUM_PEER_ID);
 
 			if (!maxClientsPass)
