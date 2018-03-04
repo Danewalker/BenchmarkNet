@@ -112,7 +112,6 @@ namespace BenchmarkNet {
 			"ENet",
 			"UNet",
 			"LiteNetLib",
-			"FastNetLib",
 			"Lidgren",
 			"MiniUDP",
 			"Hazel",
