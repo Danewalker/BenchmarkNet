@@ -108,6 +108,7 @@ namespace BenchmarkNet {
 		// Internals
 		private static ushort maxPeers = 0;
 		private static byte selectedLibrary = 0;
+		private static GCLatencyMode initialGCMode;
 		private static readonly string[] networkingLibraries = {
 			"ENet",
 			"UNet",
@@ -225,8 +226,10 @@ namespace BenchmarkNet {
 			
 			processActive = true;
 
-			if (lowLatencyMode)
+			if (lowLatencyMode) {
+				initialGCMode = GCSettings.LatencyMode;
 				GCSettings.LatencyMode = GCLatencyMode.SustainedLowLatency;
+			}
 
 			if (selectedLibrary == 0)
 				ENet.Library.Initialize();
@@ -363,6 +366,9 @@ namespace BenchmarkNet {
 						processCompleted = true;
 						Thread.Sleep(100);
 						processActive = false;
+
+						if (lowLatencyMode)
+							GCSettings.LatencyMode = initialGCMode;
 
 						break;
 					}
