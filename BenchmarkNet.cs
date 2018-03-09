@@ -121,8 +121,8 @@ namespace BenchmarkNet {
 			"DarkRift"
 		};
 		// Functions
-		private static Func<int, string> Space = (value) => (String.Empty.PadRight(value));
-		private static Func<int, decimal, decimal, decimal> PayloadFlow = (clientsChannelsCount, messageLength, sendRate) => (clientsChannelsCount * (messageLength * sendRate * 2) * 8 / (1000 * 1000)) * 2;
+		private static readonly Func<int, string> Space = (value) => (String.Empty.PadRight(value));
+		private static readonly Func<int, decimal, decimal, decimal> PayloadFlow = (clientsChannelsCount, messageLength, sendRate) => (clientsChannelsCount * (messageLength * sendRate * 2) * 8 / (1000 * 1000)) * 2;
 
 		private static void Main(string[] arguments) {
 			Console.Title = title;
@@ -367,9 +367,6 @@ namespace BenchmarkNet {
 						Thread.Sleep(100);
 						processActive = false;
 
-						if (lowLatencyMode)
-							GCSettings.LatencyMode = initialGCMode;
-
 						break;
 					}
 
@@ -378,6 +375,9 @@ namespace BenchmarkNet {
 
 				if (selectedLibrary == 0)
 					ENet.Library.Deinitialize();
+
+				if (lowLatencyMode)
+					GCSettings.LatencyMode = initialGCMode;
 			}, TaskCreationOptions.LongRunning);
 		}
 
