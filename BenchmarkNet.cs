@@ -157,14 +157,14 @@ namespace BenchmarkNet {
 			Console.Write(Environment.NewLine + "Enter the number (default 0): ");
 			Byte.TryParse(Console.ReadLine(), out selectedLibrary);
 
-			ushort defaultPort = 9500;
-			ushort defaultMaxClients = 1000;
-			int defaultServerTickRate = 64;
-			int defaultClientTickRate = 64;
-			int defaultSendRate = 15;
-			int defaultReliableMessages = 500;
-			int defaultUnreliableMessages = 1000;
-			string defaultMessage = "Sometimes we just need a good networking library";
+			const ushort defaultPort = 9500;
+			const ushort defaultMaxClients = 1000;
+			const int defaultServerTickRate = 64;
+			const int defaultClientTickRate = 64;
+			const int defaultSendRate = 15;
+			const int defaultReliableMessages = 500;
+			const int defaultUnreliableMessages = 1000;
+			const string defaultMessage = "Sometimes we just need a good networking library";
 
 			if (!instantMode) {
 				Console.Write("Port (default " + defaultPort + "): ");
@@ -213,7 +213,7 @@ namespace BenchmarkNet {
 			if (unreliableMessages == 0)
 				unreliableMessages = defaultUnreliableMessages;
 
-			if (message == String.Empty)
+			if (message.Length == 0)
 				message = defaultMessage;
 
 			reversedMessage = message.ToCharArray();
