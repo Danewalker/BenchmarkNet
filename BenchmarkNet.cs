@@ -123,7 +123,7 @@ namespace BenchmarkNet {
 		// Functions
 		private static Func<int, string> Space = (value) => (String.Empty.PadRight(value));
 		private static Func<int, decimal, decimal, decimal> PayloadFlow = (clientsChannelsCount, messageLength, sendRate) => (clientsChannelsCount * (messageLength * sendRate * 2) * 8 / (1000 * 1000)) * 2;
-		
+
 		private static void Main(string[] arguments) {
 			Console.Title = title;
 
@@ -141,13 +141,13 @@ namespace BenchmarkNet {
 			Console.WriteLine("Welcome to " + title + Space(1) + version + "!");
 			Console.WriteLine(Environment.NewLine + "Source code is available on GitHub (https://github.com/nxrighthere/BenchmarkNet)");
 			Console.WriteLine("If you have any questions, contact me (nxrighthere@gmail.com)");
-			
+
 			if (lowLatencyMode) {
 				Console.ForegroundColor = ConsoleColor.Yellow;
 				Console.WriteLine(Environment.NewLine + "The process will perform in Sustained Low Latency mode.");
 				Console.ResetColor();
 			}
-			
+
 			Console.WriteLine(Environment.NewLine + "Select a networking library");
 
 			for (int i = 0; i < networkingLibraries.Length; i++) {
@@ -191,7 +191,7 @@ namespace BenchmarkNet {
 				Console.Write("Message (default " + defaultMessage.Length + " characters): ");
 				message = Console.ReadLine();
 			}
-			
+
 			if (port == 0)
 				port = defaultPort;
 
@@ -223,7 +223,7 @@ namespace BenchmarkNet {
 
 			Console.CursorVisible = false;
 			Console.Clear();
-			
+
 			processActive = true;
 
 			if (lowLatencyMode) {
@@ -262,7 +262,7 @@ namespace BenchmarkNet {
 			serverThread.Priority = ThreadPriority.AboveNormal;
 			serverThread.Start();
 			Thread.Sleep(100);
-			
+
 			Task infoTask = Info();
 			Task superviseTask = Supervise();
 			Task spawnTask = Spawn();
@@ -292,7 +292,7 @@ namespace BenchmarkNet {
 					Console.WriteLine("Benchmarking " + networkingLibraries[selectedLibrary] + "...");
 					Console.WriteLine("Server tick rate: " + serverTickRate + ", Client tick rate: " + clientTickRate + " (ticks per second)");
 					Console.WriteLine(maxClients + Space(1) + strings[0].ToLower() + ", " + reliableMessages + " reliable and " + unreliableMessages + " unreliable messages per client, " + messageData.Length + " bytes per message, " + sendRate + " messages per second");
-					
+
 					if (!maxClientsPass) {
 						Console.ForegroundColor = ConsoleColor.Red;
 						Console.WriteLine("This networking library doesn't support more than " + strings[1] + " peers per server!");
@@ -333,7 +333,7 @@ namespace BenchmarkNet {
 						case 3: Console.WriteLine(strings[2] + "|");
 							break;
 					}
-					
+
 					Thread.Sleep(15);
 				}
 
@@ -341,7 +341,7 @@ namespace BenchmarkNet {
 					Console.SetCursorPosition(0, Console.CursorTop - 1);
 					Console.WriteLine("Process completed! Press any key to exit...");
 				}
-				
+
 				elapsedTime.Stop();
 			}, TaskCreationOptions.LongRunning);
 		}
@@ -372,7 +372,7 @@ namespace BenchmarkNet {
 
 						break;
 					}
-					
+
 					lastData = currentData;
 				}
 
@@ -407,7 +407,7 @@ namespace BenchmarkNet {
 						clients[i] = NeutrinoBenchmark.Client();
 					else
 						clients[i] = DarkRiftBenchmark.Client();
-					
+
 					Interlocked.Increment(ref clientsStartedCount);
 					Thread.Sleep(15);
 				}
@@ -431,7 +431,7 @@ namespace BenchmarkNet {
 		public static void Server() {
 			Host server = new Host();
 			server.Create(port, maxClients);
-			
+
 			Event netEvent = new Event();
 
 			while (processActive) {
@@ -465,7 +465,7 @@ namespace BenchmarkNet {
 		public static async Task Client() {
 			await Task.Factory.StartNew(() => {
 				Host client = new Host();
-				
+
 				client.Create(null, 1);
 
 				Address address = new Address();
@@ -475,7 +475,7 @@ namespace BenchmarkNet {
 
 				Peer peer = client.Connect(address, 4, 0);
 				Event netEvent = new Event();
-				
+
 				int reliableToSend = 0;
 				int unreliableToSend = 0;
 				int reliableSentCount = 0;
@@ -550,7 +550,7 @@ namespace BenchmarkNet {
 								Interlocked.Increment(ref clientsUnreliableReceived);
 								Interlocked.Add(ref clientsUnreliableBytesReceived, data.Length);
 							}
-							
+
 							netEvent.Packet.Dispose();
 
 							break;
@@ -575,12 +575,12 @@ namespace BenchmarkNet {
 			int unreliableChannel = connectionConfig.AddChannel(QosType.UnreliableSequenced);
 
 			HostTopology topology = new HostTopology(connectionConfig, maxClients);
-			
+
 			topology.SentMessagePoolSize = ushort.MaxValue;
 			topology.ReceivedMessagePoolSize = ushort.MaxValue;
 
 			NetLibraryManager server = new NetLibraryManager(globalConfig);
-			
+
 			int host = server.AddHost(topology, port, ip);
 
 			int hostID, connectionID, channelID, dataLength;
@@ -596,13 +596,13 @@ namespace BenchmarkNet {
 							if (channelID == 0) {
 								Interlocked.Increment(ref serverReliableReceived);
 								Interlocked.Add(ref serverReliableBytesReceived, dataLength);
-								server.Send(hostID, connectionID, reliableChannel, messageData, messageData.Length, out error); 
+								server.Send(hostID, connectionID, reliableChannel, messageData, messageData.Length, out error);
 								Interlocked.Increment(ref serverReliableSent);
 								Interlocked.Add(ref serverReliableBytesSent, messageData.Length);
 							} else if (channelID == 1) {
 								Interlocked.Increment(ref serverUnreliableReceived);
 								Interlocked.Add(ref serverUnreliableBytesReceived, dataLength);
-								server.Send(hostID, connectionID, unreliableChannel, messageData, messageData.Length, out error); 
+								server.Send(hostID, connectionID, unreliableChannel, messageData, messageData.Length, out error);
 								Interlocked.Increment(ref serverUnreliableSent);
 								Interlocked.Add(ref serverUnreliableBytesSent, messageData.Length);
 							}
@@ -618,14 +618,14 @@ namespace BenchmarkNet {
 		public static async Task Client() {
 			await Task.Factory.StartNew(() => {
 				ConnectionConfig connectionConfig = new ConnectionConfig();
-				
+
 				int reliableChannel = connectionConfig.AddChannel(QosType.ReliableSequenced);
 				int unreliableChannel = connectionConfig.AddChannel(QosType.UnreliableSequenced);
-				
+
 				NetLibraryManager client = new NetLibraryManager();
-				
+
 				int host = client.AddHost(new HostTopology(connectionConfig, 1), 0, null);
-				
+
 				byte connectionError;
 				int connection = client.Connect(host, ip, port, 0, out connectionError);
 
@@ -640,9 +640,9 @@ namespace BenchmarkNet {
 
 					while (processActive) {
 						byte error;
-						
+
 						if (reliableToSend > 0) {
-							client.Send(host, connection, reliableChannel, messageData, messageData.Length, out error); 
+							client.Send(host, connection, reliableChannel, messageData, messageData.Length, out error);
 							Interlocked.Decrement(ref reliableToSend);
 							Interlocked.Increment(ref reliableSentCount);
 							Interlocked.Increment(ref clientsReliableSent);
@@ -650,7 +650,7 @@ namespace BenchmarkNet {
 						}
 
 						if (unreliableToSend > 0) {
-							client.Send(host, connection, unreliableChannel, messageData, messageData.Length, out error); 
+							client.Send(host, connection, unreliableChannel, messageData, messageData.Length, out error);
 							Interlocked.Decrement(ref unreliableToSend);
 							Interlocked.Increment(ref unreliableSentCount);
 							Interlocked.Increment(ref clientsUnreliableSent);
@@ -735,7 +735,7 @@ namespace BenchmarkNet {
 		public static void Server() {
 			EventBasedNetListener listener = new EventBasedNetListener();
 			NetManager server = new NetManager(listener, maxClients);
-			
+
 			server.MergeEnabled = true;
 			server.Start(port);
 
@@ -773,7 +773,7 @@ namespace BenchmarkNet {
 			await Task.Factory.StartNew(() => {
 				EventBasedNetListener listener = new EventBasedNetListener();
 				NetManager client = new NetManager(listener);
-				
+
 				client.MergeEnabled = true;
 				client.Start();
 				client.Connect(ip, port, title + "Key");
@@ -871,7 +871,7 @@ namespace BenchmarkNet {
 
 		public static void Server() {
 			NetPeerConfiguration config = new NetPeerConfiguration(title + "Config");
-			
+
 			config.Port = port;
 			config.MaximumConnections = maxClients;
 
@@ -905,7 +905,7 @@ namespace BenchmarkNet {
 
 					server.Recycle(netMessage);
 				}
-				
+
 				Thread.Sleep(1000 / serverTickRate);
 			}
 
@@ -916,7 +916,7 @@ namespace BenchmarkNet {
 			await Task.Factory.StartNew(() => {
 				NetPeerConfiguration config = new NetPeerConfiguration(title + "Config");
 				NetClient client = new NetClient(config);
-				
+
 				client.Start();
 				client.Connect(ip, port);
 
@@ -1002,7 +1002,7 @@ namespace BenchmarkNet {
 
 						client.Recycle(netMessage);
 					}
-					
+
 					Thread.Sleep(1000 / clientTickRate);
 				}
 
@@ -1010,13 +1010,13 @@ namespace BenchmarkNet {
 			}, TaskCreationOptions.LongRunning);
 		}
 	}
-	
+
 	public class MiniUDPBenchmark : BenchmarkNet {
 		public static void Server() {
 			NetCore server = new NetCore(title, true);
 
 			server.Host(port);
-			
+
 			server.PeerNotification += (peer, data, dataLength) => {
 				Interlocked.Increment(ref serverReliableReceived);
 				Interlocked.Add(ref serverReliableBytesReceived, dataLength);
@@ -1044,7 +1044,7 @@ namespace BenchmarkNet {
 		public static async Task Client() {
 			await Task.Factory.StartNew(() => {
 				NetCore client = new NetCore(title, false);
-				
+
 				MiniUDP.NetPeer connection = client.Connect(NetUtil.StringToEndPoint(ip + ":" + port), String.Empty);
 
 				int reliableToSend = 0;
@@ -1138,7 +1138,7 @@ namespace BenchmarkNet {
 					if (data.SendOption == SendOption.Reliable) {
 						Interlocked.Increment(ref serverReliableReceived);
 						Interlocked.Add(ref serverReliableBytesReceived, data.Bytes.Length);
-						
+
 						if (client.State == Hazel.ConnectionState.Connected) {
 							client.SendBytes(messageData, SendOption.Reliable);
 							Interlocked.Increment(ref serverReliableSent);
@@ -1330,7 +1330,7 @@ namespace BenchmarkNet {
 				PhotonPeer client = new PhotonPeer(listener, ConnectionProtocol.Udp);
 
 				client.Connect(ip + ":" + port, title);
-				
+
 				int reliableToSend = 0;
 				int unreliableToSend = 0;
 				int reliableSentCount = 0;
@@ -1397,7 +1397,7 @@ namespace BenchmarkNet {
 				listener.OnUnreliableReceived += (data) => {
 					Interlocked.Increment(ref clientsUnreliableReceived);
 					Interlocked.Add(ref clientsUnreliableBytesReceived, data.Length);
-				};	
+				};
 
 				while (processActive) {
 					client.Service();
@@ -1430,7 +1430,7 @@ namespace BenchmarkNet {
 
 		public static void Server() {
 			Node server = new Node(port, typeof(NeutrinoBenchmark).Assembly);
-			
+
 			server.OnReceived += (message) => {
 				NetworkPeer peer = message.Source;
 
@@ -1462,7 +1462,7 @@ namespace BenchmarkNet {
 		public static async Task Client() {
 			await Task.Factory.StartNew(() => {
 				Node client = new Node(Task.CurrentId.ToString(), ip, port, typeof(NeutrinoBenchmark).Assembly);
-				
+
 				int reliableToSend = 0;
 				int unreliableToSend = 0;
 				int reliableSentCount = 0;
@@ -1524,7 +1524,7 @@ namespace BenchmarkNet {
 					Interlocked.Exchange(ref reliableToSend, 0);
 					Interlocked.Exchange(ref unreliableToSend, 0);
 				};
-				
+
 				client.OnReceived += (message) => {
 					if (message is ReliableMessage) {
 						ReliableMessage reliableMessage = message as ReliableMessage;
@@ -1598,7 +1598,7 @@ namespace BenchmarkNet {
 		public static async Task Client() {
 			await Task.Factory.StartNew(() => {
 				DarkRiftClient client = new DarkRiftClient();
-				
+
 				client.Connect(IPAddress.Parse(ip), port, IPVersion.IPv4);
 
 				int reliableToSend = 0;
