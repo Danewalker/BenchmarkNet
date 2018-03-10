@@ -281,9 +281,9 @@ namespace BenchmarkNet {
 					"Benchmarking " + networkingLibraries[selectedLibrary] + "...",
 					"Server tick rate: " + serverTickRate + ", Client tick rate: " + clientTickRate + " (ticks per second)",
 					maxClients + " clients, " + reliableMessages + " reliable and " + unreliableMessages + " unreliable messages per client, " + messageData.Length + " bytes per message, " + sendRate + " messages per second",
-					"GC Mode: " + (!GCSettings.IsServerGC ? "Workstation" : "Server") + " GC",
+					"GC mode: " + (!GCSettings.IsServerGC ? "Workstation" : "Server") + " GC",
 					"This networking library doesn't support more than " + (selectedLibrary > 0 ? maxPeers : ENet.Native.ENET_PROTOCOL_MAXIMUM_PEER_ID).ToString() + " peers per server!",
-					Environment.NewLine + "The process is performing in Sustained Low Latency mode.",
+					"The process is performing in Sustained Low Latency mode.",
 					Environment.NewLine + "Press any key to stop the process" + Space(1),
 				};
 
@@ -298,6 +298,9 @@ namespace BenchmarkNet {
 					Console.WriteLine(strings[1]);
 					Console.WriteLine(strings[2]);
 					Console.WriteLine(strings[3]);
+
+					if (!maxClientsPass || lowLatencyMode)
+						Console.WriteLine();
 
 					if (!maxClientsPass) {
 						Console.ForegroundColor = ConsoleColor.Red;
