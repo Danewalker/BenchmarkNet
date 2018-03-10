@@ -33,6 +33,8 @@ Usage
 --------
 Run the application and enter the desired parameters to override the default values. Do not perform any actions while the benchmark is running and wait until the process is complete.
 
+When you are going to perform a test with less than 256 simulated clients, it's highly recommended to switch [GC mode](https://github.com/nxrighthere/BenchmarkNet/wiki/Advanced-Options#gc-mode) to the Workstation GC.
+
 You can use packet sniffer to monitor how the data is transmitted, but it may affect the results.
 
 If you want to simulate a bad network condition, use [Clumsy](http://jagt.github.io/clumsy/ "Clumsy") as an ideal companion.
