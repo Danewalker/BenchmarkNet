@@ -368,7 +368,7 @@ namespace BenchmarkNet {
 						if (currentData == 0) {
 							processFailure = true;
 						} else {
-							if (((currentData / (maxClients * ((decimal)reliableMessages + (decimal)unreliableMessages) * 4)) * 100) < 90)
+							if (clientsDisconnectedCount > 1 || ((currentData / (maxClients * ((decimal)reliableMessages + (decimal)unreliableMessages) * 4)) * 100) < 90)
 								processOverload = true;
 						}
 
