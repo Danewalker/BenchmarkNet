@@ -57,7 +57,7 @@ namespace BenchmarkNet {
 	public class BenchmarkNet {
 		// Meta
 		protected const string title = "BenchmarkNet";
-		protected const string version = "1.06";
+		protected const string version = "1.07";
 		// Parameters
 		protected const string ip = "127.0.0.1";
 		protected static ushort port = 0;
@@ -139,6 +139,7 @@ namespace BenchmarkNet {
 
 			Console.SetIn(new StreamReader(Console.OpenStandardInput(8192), Console.InputEncoding, false, bufferSize: 1024));
 			Console.WriteLine("Welcome to " + title + Space(1) + version + "!");
+			
 			Console.WriteLine(Environment.NewLine + "Source code is available on GitHub (https://github.com/nxrighthere/BenchmarkNet)");
 			Console.WriteLine("If you have any questions, contact me (nxrighthere@gmail.com)");
 
@@ -277,8 +278,12 @@ namespace BenchmarkNet {
 				int spinnerTimer = 0;
 				int spinnerSequence = 0;
 				string[] strings = {
-					"Client" + (maxClients > 1 ? "s" : String.Empty),
-					(selectedLibrary > 0 ? maxPeers : ENet.Native.ENET_PROTOCOL_MAXIMUM_PEER_ID).ToString(),
+					"Benchmarking " + networkingLibraries[selectedLibrary] + "...",
+					"Server tick rate: " + serverTickRate + ", Client tick rate: " + clientTickRate + " (ticks per second)",
+					maxClients + " clients, " + reliableMessages + " reliable and " + unreliableMessages + " unreliable messages per client, " + messageData.Length + " bytes per message, " + sendRate + " messages per second",
+					"GC Mode: " + (!GCSettings.IsServerGC ? "Workstation" : "Server") + " GC",
+					"This networking library doesn't support more than " + (selectedLibrary > 0 ? maxPeers : ENet.Native.ENET_PROTOCOL_MAXIMUM_PEER_ID).ToString() + " peers per server!",
+					Environment.NewLine + "The process is performing in Sustained Low Latency mode.",
 					Environment.NewLine + "Press any key to stop the process" + Space(1),
 				};
 
@@ -289,29 +294,30 @@ namespace BenchmarkNet {
 				while (processActive) {
 					Console.CursorVisible = false;
 					Console.SetCursorPosition(0, 0);
-					Console.WriteLine("Benchmarking " + networkingLibraries[selectedLibrary] + "...");
-					Console.WriteLine("Server tick rate: " + serverTickRate + ", Client tick rate: " + clientTickRate + " (ticks per second)");
-					Console.WriteLine(maxClients + Space(1) + strings[0].ToLower() + ", " + reliableMessages + " reliable and " + unreliableMessages + " unreliable messages per client, " + messageData.Length + " bytes per message, " + sendRate + " messages per second");
+					Console.WriteLine(strings[0]);
+					Console.WriteLine(strings[1]);
+					Console.WriteLine(strings[2]);
+					Console.WriteLine(strings[3]);
 
 					if (!maxClientsPass) {
 						Console.ForegroundColor = ConsoleColor.Red;
-						Console.WriteLine("This networking library doesn't support more than " + strings[1] + " peers per server!");
+						Console.WriteLine(strings[4]);
 						Console.ResetColor();
 					}
 
 					if (lowLatencyMode) {
 						Console.ForegroundColor = ConsoleColor.Yellow;
-						Console.WriteLine(Environment.NewLine + "The process is performing in Sustained Low Latency mode.");
+						Console.WriteLine(strings[5]);
 						Console.ResetColor();
 					}
 
 					Console.WriteLine(Environment.NewLine + "Server status: " + (processFailure || !serverThread.IsAlive ? "Failure" + Space(2) : (processOverload ? "Overload" + Space(1) : (processCompleted ? "Completed" : "Running" + Space(2)))));
-					Console.WriteLine(strings[0] + " status: " + clientsStartedCount + " started, " + clientsConnectedCount + " connected, " + clientsDisconnectedCount + " dropped");
+					Console.WriteLine("Clients status: " + clientsStartedCount + " started, " + clientsConnectedCount + " connected, " + clientsDisconnectedCount + " dropped");
 					Console.WriteLine("Server payload flow: " + PayloadFlow(clientsChannelsCount, messageData.Length, sendRate).ToString("0.00") + " mbps (current), " + PayloadFlow(maxClients * 2, messageData.Length, sendRate).ToString("0.00") + " mbps (predicted)" + Space(10));
-					Console.WriteLine(strings[0] + " sent -> Reliable: " + clientsReliableSent + " messages (" + clientsReliableBytesSent + " bytes), Unreliable: " + clientsUnreliableSent + " messages (" + clientsUnreliableBytesSent + " bytes)");
+					Console.WriteLine("Clients sent -> Reliable: " + clientsReliableSent + " messages (" + clientsReliableBytesSent + " bytes), Unreliable: " + clientsUnreliableSent + " messages (" + clientsUnreliableBytesSent + " bytes)");
 					Console.WriteLine("Server received <- Reliable: " + serverReliableReceived + " messages (" + serverReliableBytesReceived + " bytes), Unreliable: " + serverUnreliableReceived + " messages (" + serverUnreliableBytesReceived + " bytes)");
 					Console.WriteLine("Server sent -> Reliable: " + serverReliableSent + " messages (" + serverReliableBytesSent + " bytes), Unreliable: " + serverUnreliableSent + " messages (" + serverUnreliableBytesSent + " bytes)");
-					Console.WriteLine(strings[0] + " received <- Reliable: " + clientsReliableReceived + " messages (" + clientsReliableBytesReceived + " bytes), Unreliable: " + clientsUnreliableReceived + " messages (" + clientsUnreliableBytesReceived + " bytes)");
+					Console.WriteLine("Clients received <- Reliable: " + clientsReliableReceived + " messages (" + clientsReliableBytesReceived + " bytes), Unreliable: " + clientsUnreliableReceived + " messages (" + clientsUnreliableBytesReceived + " bytes)");
 					Console.WriteLine("Total - Reliable: " + ((ulong)clientsReliableSent + (ulong)serverReliableReceived + (ulong)serverReliableSent + (ulong)clientsReliableReceived) + " messages (" + ((ulong)clientsReliableBytesSent + (ulong)serverReliableBytesReceived + (ulong)serverReliableBytesSent + (ulong)clientsReliableBytesReceived) + " bytes), Unreliable: " + ((ulong)clientsUnreliableSent + (ulong)serverUnreliableReceived + (ulong)serverUnreliableSent + (ulong)clientsUnreliableReceived) + " messages (" + ((ulong)clientsUnreliableBytesSent + (ulong)serverUnreliableBytesReceived + (ulong)serverUnreliableBytesSent + (ulong)clientsUnreliableBytesReceived) + " bytes)");
 					Console.WriteLine("Expected - Reliable: " + (maxClients * (ulong)reliableMessages * 4) + " messages (" + (maxClients * (ulong)reliableMessages * (ulong)messageData.Length * 4) + " bytes), Unreliable: " + (maxClients * (ulong)unreliableMessages * 4) + " messages (" + (maxClients * (ulong)unreliableMessages * (ulong)messageData.Length * 4) + " bytes)");
 					Console.WriteLine("Elapsed time: " + elapsedTime.Elapsed.Hours.ToString("00") + ":" + elapsedTime.Elapsed.Minutes.ToString("00") + ":" + elapsedTime.Elapsed.Seconds.ToString("00"));
@@ -324,13 +330,13 @@ namespace BenchmarkNet {
 					}
 
 					switch (spinnerSequence % 4) {
-						case 0: Console.WriteLine(strings[2] + "/");
+						case 0: Console.WriteLine(strings[6] + "/");
 							break;
-						case 1: Console.WriteLine(strings[2] + "—");
+						case 1: Console.WriteLine(strings[6] + "—");
 							break;
-						case 2: Console.WriteLine(strings[2] + "\\");
+						case 2: Console.WriteLine(strings[6] + "\\");
 							break;
-						case 3: Console.WriteLine(strings[2] + "|");
+						case 3: Console.WriteLine(strings[6] + "|");
 							break;
 					}
 
