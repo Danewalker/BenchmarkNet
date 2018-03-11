@@ -33,7 +33,7 @@ Usage
 --------
 Run the application and enter the desired parameters to override the default values. Do not perform any actions while the benchmark is running and wait until the process is complete.
 
-When you are going to perform a test with less than 256 simulated clients, it's highly recommended to switch [GC mode](https://github.com/nxrighthere/BenchmarkNet/wiki/Advanced-Options#gc-mode) from Server GC to Workstation GC.
+When you are going to perform a test with less than 256 simulated clients, it's highly recommended to switch [GC mode](https://github.com/nxrighthere/BenchmarkNet/wiki/Advanced-Options#gc-mode) from Server GC to Workstation GC. You can find more information in [this article](https://blogs.msdn.microsoft.com/seteplia/2017/01/05/understanding-different-gc-modes-with-concurrency-visualizer/) about how different GC modes are working.
 
 You can use any packet sniffer to monitor how the data is transmitted, but it may affect the results.
 
