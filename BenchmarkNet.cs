@@ -287,9 +287,7 @@ namespace BenchmarkNet {
 					Environment.NewLine + "Press any key to stop the process" + Space(1),
 				};
 
-				Stopwatch elapsedTime = new Stopwatch();
-
-				elapsedTime.Start();
+				Stopwatch elapsedTime = Stopwatch.StartNew();
 
 				while (processActive) {
 					Console.CursorVisible = false;
