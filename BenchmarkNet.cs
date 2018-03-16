@@ -436,8 +436,12 @@ namespace BenchmarkNet {
 		}
 
 		public static void Server() {
-			Host server = new Host();
-			server.Create(port, maxClients);
+			Host server = new Host();			
+			Address address = new Address();
+
+			address.Port = port;
+
+			server.Create(address, maxClients, 4);
 
 			Event netEvent = new Event();
 
@@ -472,13 +476,12 @@ namespace BenchmarkNet {
 		public static async Task Client() {
 			await Task.Factory.StartNew(() => {
 				Host client = new Host();
-
-				client.Create(null, 1);
-
 				Address address = new Address();
 
 				address.SetHost(ip);
 				address.Port = port;
+
+				client.Create(null, 1);
 
 				Peer peer = client.Connect(address, 4, 0);
 				Event netEvent = new Event();
