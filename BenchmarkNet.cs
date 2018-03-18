@@ -53,8 +53,8 @@ using DarkRift;
 using DarkRift.Server;
 using DarkRift.Client;
 
-namespace BenchmarkNet {
-	public class BenchmarkNet {
+namespace NX {
+	public abstract class BenchmarkNet {
 		// Meta
 		protected const string title = "BenchmarkNet";
 		protected const string version = "1.07";
