@@ -277,6 +277,12 @@ namespace NX {
 			await Task.Factory.StartNew(() => {
 				int spinnerTimer = 0;
 				int spinnerSequence = 0;
+				string[] spinner = {
+					"/",
+					"—",
+					"\\",
+					"|"
+				};
 				string[] strings = {
 					"Benchmarking " + networkingLibraries[selectedLibrary] + "...",
 					"Server tick rate: " + serverTickRate + ", Client tick rate: " + clientTickRate + " (ticks per second)",
@@ -284,8 +290,11 @@ namespace NX {
 					"GC mode: " + (!GCSettings.IsServerGC ? "Workstation" : "Server") + " GC",
 					"This networking library doesn't support more than " + (selectedLibrary > 0 ? maxPeers : ENet.Native.ENET_PROTOCOL_MAXIMUM_PEER_ID).ToString() + " peers per server!",
 					"The process is performing in Sustained Low Latency mode.",
-					Environment.NewLine + "Press any key to stop the process" + Space(1),
 				};
+
+				for (int i = 0; i < spinner.Length; i++) {
+					spinner[i] = Environment.NewLine + "Press any key to stop the process" + Space(1) + spinner[i];
+				}
 
 				Stopwatch elapsedTime = Stopwatch.StartNew();
 
@@ -331,13 +340,13 @@ namespace NX {
 					}
 
 					switch (spinnerSequence % 4) {
-						case 0: Console.WriteLine(strings[6] + "/");
+						case 0: Console.WriteLine(spinner[0]);
 							break;
-						case 1: Console.WriteLine(strings[6] + "—");
+						case 1: Console.WriteLine(spinner[1]);
 							break;
-						case 2: Console.WriteLine(strings[6] + "\\");
+						case 2: Console.WriteLine(spinner[2]);
 							break;
-						case 3: Console.WriteLine(strings[6] + "|");
+						case 3: Console.WriteLine(spinner[3]);
 							break;
 					}
 
