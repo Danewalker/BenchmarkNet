@@ -459,17 +459,15 @@ namespace NX {
 
 				switch (netEvent.Type) {
 					case EventType.Receive:
-						byte[] data = netEvent.Packet.GetBytes();
-
 						if (netEvent.ChannelID == 2) {
 							Interlocked.Increment(ref serverReliableReceived);
-							Interlocked.Add(ref serverReliableBytesReceived, data.Length);
+							Interlocked.Add(ref serverReliableBytesReceived, netEvent.Packet.Length);
 							SendReliable(messageData, 0, netEvent.Peer);
 							Interlocked.Increment(ref serverReliableSent);
 							Interlocked.Add(ref serverReliableBytesSent, messageData.Length);
 						} else if (netEvent.ChannelID == 3) {
 							Interlocked.Increment(ref serverUnreliableReceived);
-							Interlocked.Add(ref serverUnreliableBytesReceived, data.Length);
+							Interlocked.Add(ref serverUnreliableBytesReceived, netEvent.Packet.Length);
 							SendUnreliable(messageData, 1, netEvent.Peer);
 							Interlocked.Increment(ref serverUnreliableSent);
 							Interlocked.Add(ref serverUnreliableBytesSent, messageData.Length);
@@ -560,14 +558,12 @@ namespace NX {
 							break;
 
 						case EventType.Receive:
-							byte[] data = netEvent.Packet.GetBytes();
-
 							if (netEvent.ChannelID == 0) {
 								Interlocked.Increment(ref clientsReliableReceived);
-								Interlocked.Add(ref clientsReliableBytesReceived, data.Length);
+								Interlocked.Add(ref clientsReliableBytesReceived, netEvent.Packet.Length);
 							} else if (netEvent.ChannelID == 1) {
 								Interlocked.Increment(ref clientsUnreliableReceived);
-								Interlocked.Add(ref clientsUnreliableBytesReceived, data.Length);
+								Interlocked.Add(ref clientsUnreliableBytesReceived, netEvent.Packet.Length);
 							}
 
 							netEvent.Packet.Dispose();
