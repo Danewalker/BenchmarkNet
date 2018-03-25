@@ -353,12 +353,12 @@ namespace NX {
 					Thread.Sleep(15);
 				}
 
+				elapsedTime.Stop();
+
 				if (!processActive && processCompleted) {
 					Console.SetCursorPosition(0, Console.CursorTop - 1);
 					Console.WriteLine("Process completed! Press any key to exit...");
 				}
-
-				elapsedTime.Stop();
 			}, TaskCreationOptions.LongRunning);
 		}
 
