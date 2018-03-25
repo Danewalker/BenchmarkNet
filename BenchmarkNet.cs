@@ -759,17 +759,15 @@ namespace NX {
 			};
 
 			listener.NetworkReceiveEvent += (peer, reader, deliveryMethod) => {
-				byte[] data = reader.Data;
-
 				if (deliveryMethod == DeliveryMethod.ReliableOrdered) {
 					Interlocked.Increment(ref serverReliableReceived);
-					Interlocked.Add(ref serverReliableBytesReceived, data.Length);
+					Interlocked.Add(ref serverReliableBytesReceived, reader.AvailableBytes);
 					SendReliable(messageData, peer);
 					Interlocked.Increment(ref serverReliableSent);
 					Interlocked.Add(ref serverReliableBytesSent, messageData.Length);
 				} else if (deliveryMethod == DeliveryMethod.Sequenced) {
 					Interlocked.Increment(ref serverUnreliableReceived);
-					Interlocked.Add(ref serverUnreliableBytesReceived, data.Length);
+					Interlocked.Add(ref serverUnreliableBytesReceived, reader.AvailableBytes);
 					SendUnreliable(messageData, peer);
 					Interlocked.Increment(ref serverUnreliableSent);
 					Interlocked.Add(ref serverUnreliableBytesSent, messageData.Length);
@@ -852,14 +850,12 @@ namespace NX {
 				};
 
 				listener.NetworkReceiveEvent += (peer, reader, deliveryMethod) => {
-					byte[] data = reader.Data;
-
 					if (deliveryMethod == DeliveryMethod.ReliableOrdered) {
 						Interlocked.Increment(ref clientsReliableReceived);
-						Interlocked.Add(ref clientsReliableBytesReceived, data.Length);
+						Interlocked.Add(ref clientsReliableBytesReceived, reader.AvailableBytes);
 					} else if (deliveryMethod == DeliveryMethod.Sequenced) {
 						Interlocked.Increment(ref clientsUnreliableReceived);
-						Interlocked.Add(ref clientsUnreliableBytesReceived, data.Length);
+						Interlocked.Add(ref clientsUnreliableBytesReceived, reader.AvailableBytes);
 					}
 				};
 
