@@ -283,6 +283,12 @@ namespace NX {
 					"\\",
 					"|"
 				};
+				string[] status = {
+					"Running" + Space(2),
+					"Failure" + Space(2),
+					"Overload" + Space(1),
+					"Completed"
+				};
 				string[] strings = {
 					"Benchmarking " + networkingLibraries[selectedLibrary] + "...",
 					"Server tick rate: " + serverTickRate + ", Client tick rate: " + clientTickRate + " (ticks per second)",
@@ -297,6 +303,7 @@ namespace NX {
 				}
 
 				Stopwatch elapsedTime = Stopwatch.StartNew();
+				StringBuilder info = new StringBuilder(1024);
 
 				while (processActive) {
 					Console.CursorVisible = false;
@@ -321,16 +328,18 @@ namespace NX {
 						Console.ResetColor();
 					}
 
-					Console.WriteLine(Environment.NewLine + "Server status: " + (processFailure || !serverThread.IsAlive ? "Failure" + Space(2) : (processOverload ? "Overload" + Space(1) : (processCompleted ? "Completed" : "Running" + Space(2)))));
-					Console.WriteLine("Clients status: " + clientsStartedCount + " started, " + clientsConnectedCount + " connected, " + clientsDisconnectedCount + " dropped");
-					Console.WriteLine("Server payload flow: " + PayloadFlow(clientsChannelsCount, messageData.Length, sendRate).ToString("0.00") + " mbps (current), " + PayloadFlow(maxClients * 2, messageData.Length, sendRate).ToString("0.00") + " mbps (eventual)" + Space(10));
-					Console.WriteLine("Clients sent -> Reliable: " + clientsReliableSent + " messages (" + clientsReliableBytesSent + " bytes), Unreliable: " + clientsUnreliableSent + " messages (" + clientsUnreliableBytesSent + " bytes)");
-					Console.WriteLine("Server received <- Reliable: " + serverReliableReceived + " messages (" + serverReliableBytesReceived + " bytes), Unreliable: " + serverUnreliableReceived + " messages (" + serverUnreliableBytesReceived + " bytes)");
-					Console.WriteLine("Server sent -> Reliable: " + serverReliableSent + " messages (" + serverReliableBytesSent + " bytes), Unreliable: " + serverUnreliableSent + " messages (" + serverUnreliableBytesSent + " bytes)");
-					Console.WriteLine("Clients received <- Reliable: " + clientsReliableReceived + " messages (" + clientsReliableBytesReceived + " bytes), Unreliable: " + clientsUnreliableReceived + " messages (" + clientsUnreliableBytesReceived + " bytes)");
-					Console.WriteLine("Total - Reliable: " + ((ulong)clientsReliableSent + (ulong)serverReliableReceived + (ulong)serverReliableSent + (ulong)clientsReliableReceived) + " messages (" + ((ulong)clientsReliableBytesSent + (ulong)serverReliableBytesReceived + (ulong)serverReliableBytesSent + (ulong)clientsReliableBytesReceived) + " bytes), Unreliable: " + ((ulong)clientsUnreliableSent + (ulong)serverUnreliableReceived + (ulong)serverUnreliableSent + (ulong)clientsUnreliableReceived) + " messages (" + ((ulong)clientsUnreliableBytesSent + (ulong)serverUnreliableBytesReceived + (ulong)serverUnreliableBytesSent + (ulong)clientsUnreliableBytesReceived) + " bytes)");
-					Console.WriteLine("Expected - Reliable: " + (maxClients * (ulong)reliableMessages * 4) + " messages (" + (maxClients * (ulong)reliableMessages * (ulong)messageData.Length * 4) + " bytes), Unreliable: " + (maxClients * (ulong)unreliableMessages * 4) + " messages (" + (maxClients * (ulong)unreliableMessages * (ulong)messageData.Length * 4) + " bytes)");
-					Console.WriteLine("Elapsed time: " + elapsedTime.Elapsed.Hours.ToString("00") + ":" + elapsedTime.Elapsed.Minutes.ToString("00") + ":" + elapsedTime.Elapsed.Seconds.ToString("00"));
+					info.Clear();
+					info.AppendLine().Append("Server status: ").Append((processFailure || !serverThread.IsAlive ? status[1] : (processOverload ? status[2] : (processCompleted ? status[3] : status[0]))));
+					info.AppendLine().Append("Clients status: ").Append(clientsStartedCount).Append(" started, ").Append(clientsConnectedCount).Append(" connected, ").Append(clientsDisconnectedCount).Append(" dropped");
+					info.AppendLine().Append("Server payload flow: ").Append(PayloadFlow(clientsChannelsCount, messageData.Length, sendRate).ToString("0.00")).Append(" mbps (current), ").Append(PayloadFlow(maxClients * 2, messageData.Length, sendRate).ToString("0.00")).Append(" mbps (eventual)").Append(Space(10));
+					info.AppendLine().Append("Clients sent -> Reliable: ").Append(clientsReliableSent).Append(" messages (").Append(clientsReliableBytesSent).Append(" bytes), Unreliable: ").Append(clientsUnreliableSent).Append(" messages (").Append(clientsUnreliableBytesSent).Append(" bytes)");
+					info.AppendLine().Append("Server received <- Reliable: ").Append(serverReliableReceived).Append(" messages (").Append(serverReliableBytesReceived).Append(" bytes), Unreliable: ").Append(serverUnreliableReceived).Append(" messages (").Append(serverUnreliableBytesReceived).Append(" bytes)");
+					info.AppendLine().Append("Server sent -> Reliable: ").Append(serverReliableSent).Append(" messages (").Append(serverReliableBytesSent).Append(" bytes), Unreliable: ").Append(serverUnreliableSent).Append(" messages (").Append(serverUnreliableBytesSent).Append(" bytes)");
+					info.AppendLine().Append("Clients received <- Reliable: ").Append(clientsReliableReceived).Append(" messages (").Append(clientsReliableBytesReceived).Append(" bytes), Unreliable: ").Append(clientsUnreliableReceived).Append(" messages (").Append(clientsUnreliableBytesReceived).Append(" bytes)");
+					info.AppendLine().Append("Total - Reliable: ").Append((ulong)clientsReliableSent + (ulong)serverReliableReceived + (ulong)serverReliableSent + (ulong)clientsReliableReceived).Append(" messages (").Append((ulong)clientsReliableBytesSent + (ulong)serverReliableBytesReceived + (ulong)serverReliableBytesSent + (ulong)clientsReliableBytesReceived).Append(" bytes), Unreliable: ").Append((ulong)clientsUnreliableSent + (ulong)serverUnreliableReceived + (ulong)serverUnreliableSent + (ulong)clientsUnreliableReceived).Append(" messages (").Append((ulong)clientsUnreliableBytesSent + (ulong)serverUnreliableBytesReceived + (ulong)serverUnreliableBytesSent + (ulong)clientsUnreliableBytesReceived).Append(" bytes)");
+					info.AppendLine().Append("Expected - Reliable: ").Append(maxClients * (ulong)reliableMessages * 4).Append(" messages (").Append(maxClients * (ulong)reliableMessages * (ulong)messageData.Length * 4).Append(" bytes), Unreliable: ").Append(maxClients * (ulong)unreliableMessages * 4).Append(" messages (").Append(maxClients * (ulong)unreliableMessages * (ulong)messageData.Length * 4).Append(" bytes)");
+					info.AppendLine().Append("Elapsed time: ").Append(elapsedTime.Elapsed.Hours.ToString("00")).Append(":").Append(elapsedTime.Elapsed.Minutes.ToString("00")).Append(":").Append(elapsedTime.Elapsed.Seconds.ToString("00"));
+					Console.WriteLine(info);
 
 					if (spinnerTimer >= 10) {
 						spinnerSequence++;
