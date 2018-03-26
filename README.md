@@ -47,7 +47,7 @@ If you have any questions, contact me via [email](mailto:nxrighthere@gmail.com "
 
 Donations
 --------
-This project has already had an impact and helped developers in an improvement of their networking libraries. If you like this project, you can support me on [PayPal](https://www.paypal.me/nxrighthere)
+This project has already had an impact and helped developers in an improvement of networking libraries. If you like this project, you can support me on [PayPal](https://www.paypal.me/nxrighthere)
 or [Bountysource](https://salt.bountysource.com/checkout/amount?team=nxrighthere).
 
 Bitcoin `173ZRNuT4k7ss7rAVmNCZr6hLfFY4DZubU` Litecoin `LhdxsS7AUhUrKMmMyTX1yL4EQp6tzSonDT`
