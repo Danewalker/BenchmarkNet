@@ -895,17 +895,15 @@ namespace NX {
 				while ((netMessage = server.ReadMessage()) != null) {
 					switch (netMessage.MessageType) {
 						case NetIncomingMessageType.Data:
-							byte[] data = netMessage.ReadBytes(netMessage.LengthBytes);
-
 							if (netMessage.SequenceChannel == 2) {
 								Interlocked.Increment(ref serverReliableReceived);
-								Interlocked.Add(ref serverReliableBytesReceived, data.Length);
+								Interlocked.Add(ref serverReliableBytesReceived, netMessage.LengthBytes);
 								SendReliable(messageData, netMessage.SenderConnection, server.CreateMessage(), 0);
 								Interlocked.Increment(ref serverReliableSent);
 								Interlocked.Add(ref serverReliableBytesSent, messageData.Length);
 							} else if (netMessage.SequenceChannel == 3) {
 								Interlocked.Increment(ref serverUnreliableReceived);
-								Interlocked.Add(ref serverUnreliableBytesReceived, data.Length);
+								Interlocked.Add(ref serverUnreliableBytesReceived, netMessage.LengthBytes);
 								SendUnreliable(messageData, netMessage.SenderConnection, server.CreateMessage(), 1);
 								Interlocked.Increment(ref serverUnreliableSent);
 								Interlocked.Add(ref serverUnreliableBytesSent, messageData.Length);
@@ -998,14 +996,12 @@ namespace NX {
 								break;
 
 							case NetIncomingMessageType.Data:
-								byte[] data = netMessage.ReadBytes(netMessage.LengthBytes);
-
 								if (netMessage.SequenceChannel == 0) {
 									Interlocked.Increment(ref clientsReliableReceived);
-									Interlocked.Add(ref clientsReliableBytesReceived, data.Length);
+									Interlocked.Add(ref clientsReliableBytesReceived, netMessage.LengthBytes);
 								} else if (netMessage.SequenceChannel == 1) {
 									Interlocked.Increment(ref clientsUnreliableReceived);
-									Interlocked.Add(ref clientsUnreliableBytesReceived, data.Length);
+									Interlocked.Add(ref clientsUnreliableBytesReceived, netMessage.LengthBytes);
 								}
 
 								break;
