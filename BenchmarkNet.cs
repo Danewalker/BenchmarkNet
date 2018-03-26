@@ -302,8 +302,8 @@ namespace NX {
 					spinner[i] = Environment.NewLine + "Press any key to stop the process" + Space(1) + spinner[i];
 				}
 
-				Stopwatch elapsedTime = Stopwatch.StartNew();
 				StringBuilder info = new StringBuilder(1024);
+				Stopwatch elapsedTime = Stopwatch.StartNew();
 
 				while (processActive) {
 					Console.CursorVisible = false;
