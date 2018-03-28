@@ -19,7 +19,7 @@
  *  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
  *  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  *  SOFTWARE.
-*/
+ */
 
 using System;
 using System.Diagnostics;
@@ -57,7 +57,7 @@ namespace NX {
 	public abstract class BenchmarkNet {
 		// Meta
 		protected const string title = "BenchmarkNet";
-		protected const string version = "1.07";
+		protected const string version = "1.08";
 		// Parameters
 		protected const string ip = "127.0.0.1";
 		protected static ushort port = 0;
@@ -139,7 +139,7 @@ namespace NX {
 
 			Console.SetIn(new StreamReader(Console.OpenStandardInput(8192), Console.InputEncoding, false, bufferSize: 1024));
 			Console.WriteLine("Welcome to " + title + Space(1) + version + "!");
-			
+
 			Console.WriteLine(Environment.NewLine + "Source code is available on GitHub (https://github.com/nxrighthere/BenchmarkNet)");
 			Console.WriteLine("If you have any questions, contact me (nxrighthere@gmail.com)");
 
@@ -347,7 +347,6 @@ namespace NX {
 					} else {
 						spinnerTimer++;
 					}
-
 					switch (spinnerSequence % 4) {
 						case 0: Console.WriteLine(spinner[0]);
 							break;
@@ -381,12 +380,10 @@ namespace NX {
 					decimal currentData = ((decimal)serverReliableSent + (decimal)serverReliableReceived + (decimal)serverUnreliableSent + (decimal)serverUnreliableReceived + (decimal)clientsReliableSent + (decimal)clientsReliableReceived + (decimal)clientsUnreliableSent + (decimal)clientsUnreliableReceived);
 
 					if (currentData == lastData) {
-						if (currentData == 0) {
+						if (currentData == 0)
 							processFailure = true;
-						} else {
-							if (clientsDisconnectedCount > 1 || ((currentData / (maxClients * ((decimal)reliableMessages + (decimal)unreliableMessages) * 4)) * 100) < 90)
-								processOverload = true;
-						}
+						else if (clientsDisconnectedCount > 1 || ((currentData / (maxClients * ((decimal)reliableMessages + (decimal)unreliableMessages) * 4)) * 100) < 90)
+							processOverload = true;
 
 						processCompleted = true;
 						Thread.Sleep(100);
@@ -454,7 +451,7 @@ namespace NX {
 		}
 
 		public static void Server() {
-			Host server = new Host();			
+			Host server = new Host();
 			Address address = new Address();
 
 			address.Port = port;
@@ -465,7 +462,6 @@ namespace NX {
 
 			while (processActive) {
 				server.Service(1000 / serverTickRate, out netEvent);
-
 				switch (netEvent.Type) {
 					case EventType.Receive:
 						if (netEvent.ChannelID == 2) {
@@ -550,7 +546,6 @@ namespace NX {
 
 				while (processActive) {
 					client.Service(1000 / clientTickRate, out netEvent);
-
 					switch (netEvent.Type) {
 						case EventType.Connect:
 							Interlocked.Increment(ref clientsConnectedCount);
@@ -1432,7 +1427,9 @@ namespace NX {
 			}
 
 			[MsgPack.Serialization.MessagePackMember(0)]
-			public string Message { get; set; }
+			public string Message {
+				get; set;
+			}
 		}
 
 		private class UnreliableMessage : NetworkMessage {
@@ -1441,7 +1438,9 @@ namespace NX {
 			}
 
 			[MsgPack.Serialization.MessagePackMember(0)]
-			public string Message { get; set; }
+			public string Message {
+				get; set;
+			}
 		}
 
 		public static void Server() {
