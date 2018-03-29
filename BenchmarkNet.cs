@@ -87,7 +87,7 @@ namespace NX {
 		// Stats
 		protected static volatile int clientsStartedCount = 0;
 		protected static volatile int clientsConnectedCount = 0;
-		protected static volatile int clientsChannelsCount = 0;
+		protected static volatile int clientsStreamsCount = 0;
 		protected static volatile int clientsDisconnectedCount = 0;
 		protected static volatile int serverReliableSent = 0;
 		protected static volatile int serverReliableReceived = 0;
@@ -122,7 +122,7 @@ namespace NX {
 		};
 		// Functions
 		private static readonly Func<int, string> Space = (value) => (String.Empty.PadRight(value));
-		private static readonly Func<int, decimal, decimal, decimal> PayloadFlow = (clientsChannelsCount, messageLength, sendRate) => (clientsChannelsCount * (messageLength * sendRate * 2) * 8 / (1000 * 1000)) * 2;
+		private static readonly Func<int, decimal, decimal, decimal> PayloadFlow = (clientsStreamsCount, messageLength, sendRate) => (clientsStreamsCount * (messageLength * sendRate * 2) * 8 / (1000 * 1000)) * 2;
 
 		private static void Main(string[] arguments) {
 			Console.Title = title;
@@ -331,7 +331,7 @@ namespace NX {
 					info.Clear();
 					info.AppendLine().Append("Server status: ").Append((processFailure || !serverThread.IsAlive ? status[1] : (processOverload ? status[2] : (processCompleted ? status[3] : status[0]))));
 					info.AppendLine().Append("Clients status: ").Append(clientsStartedCount).Append(" started, ").Append(clientsConnectedCount).Append(" connected, ").Append(clientsDisconnectedCount).Append(" dropped");
-					info.AppendLine().Append("Server payload flow: ").Append(PayloadFlow(clientsChannelsCount, messageData.Length, sendRate).ToString("0.00")).Append(" mbps (current), ").Append(PayloadFlow(maxClients * 2, messageData.Length, sendRate).ToString("0.00")).Append(" mbps (eventual)").Append(Space(10));
+					info.AppendLine().Append("Server payload flow: ").Append(PayloadFlow(clientsStreamsCount, messageData.Length, sendRate).ToString("0.00")).Append(" mbps \\ ").Append(PayloadFlow(maxClients * 2, messageData.Length, sendRate).ToString("0.00")).Append(" mbps").Append(Space(10));
 					info.AppendLine().Append("Clients sent -> Reliable: ").Append(clientsReliableSent).Append(" messages (").Append(clientsReliableBytesSent).Append(" bytes), Unreliable: ").Append(clientsUnreliableSent).Append(" messages (").Append(clientsUnreliableBytesSent).Append(" bytes)");
 					info.AppendLine().Append("Server received <- Reliable: ").Append(serverReliableReceived).Append(" messages (").Append(serverReliableBytesReceived).Append(" bytes), Unreliable: ").Append(serverUnreliableReceived).Append(" messages (").Append(serverUnreliableBytesReceived).Append(" bytes)");
 					info.AppendLine().Append("Server sent -> Reliable: ").Append(serverReliableSent).Append(" messages (").Append(serverReliableBytesSent).Append(" bytes), Unreliable: ").Append(serverUnreliableSent).Append(" messages (").Append(serverUnreliableBytesSent).Append(" bytes)");
@@ -440,12 +440,14 @@ namespace NX {
 	public class ENetBenchmark : BenchmarkNet {
 		private static void SendReliable(byte[] data, byte channelID, Peer peer) {
 			Packet packet = new Packet();
+
 			packet.Create(data, 0, data.Length, PacketFlags.Reliable); // Reliable Sequenced
 			peer.Send(channelID, packet);
 		}
 
 		private static void SendUnreliable(byte[] data, byte channelID, Peer peer) {
 			Packet packet = new Packet();
+
 			packet.Create(data, 0, data.Length, PacketFlags.None); // Unreliable Sequenced
 			peer.Send(channelID, packet);
 		}
@@ -526,18 +528,18 @@ namespace NX {
 
 						if (reliableToSend > 0 && !reliableIncremented) {
 							reliableIncremented = true;
-							Interlocked.Increment(ref clientsChannelsCount);
+							Interlocked.Increment(ref clientsStreamsCount);
 						} else if (reliableToSend == 0 && reliableIncremented) {
 							reliableIncremented = false;
-							Interlocked.Decrement(ref clientsChannelsCount);
+							Interlocked.Decrement(ref clientsStreamsCount);
 						}
 
 						if (unreliableToSend > 0 && !unreliableIncremented) {
 							unreliableIncremented = true;
-							Interlocked.Increment(ref clientsChannelsCount);
+							Interlocked.Increment(ref clientsStreamsCount);
 						} else if (unreliableToSend == 0 && unreliableIncremented) {
 							unreliableIncremented = false;
-							Interlocked.Decrement(ref clientsChannelsCount);
+							Interlocked.Decrement(ref clientsStreamsCount);
 						}
 
 						await Task.Delay(1000 / sendRate);
@@ -678,18 +680,18 @@ namespace NX {
 
 						if (reliableToSend > 0 && !reliableIncremented) {
 							reliableIncremented = true;
-							Interlocked.Increment(ref clientsChannelsCount);
+							Interlocked.Increment(ref clientsStreamsCount);
 						} else if (reliableToSend == 0 && reliableIncremented) {
 							reliableIncremented = false;
-							Interlocked.Decrement(ref clientsChannelsCount);
+							Interlocked.Decrement(ref clientsStreamsCount);
 						}
 
 						if (unreliableToSend > 0 && !unreliableIncremented) {
 							unreliableIncremented = true;
-							Interlocked.Increment(ref clientsChannelsCount);
+							Interlocked.Increment(ref clientsStreamsCount);
 						} else if (unreliableToSend == 0 && unreliableIncremented) {
 							unreliableIncremented = false;
-							Interlocked.Decrement(ref clientsChannelsCount);
+							Interlocked.Decrement(ref clientsStreamsCount);
 						}
 
 						await Task.Delay(1000 / sendRate);
@@ -823,18 +825,18 @@ namespace NX {
 
 						if (reliableToSend > 0 && !reliableIncremented) {
 							reliableIncremented = true;
-							Interlocked.Increment(ref clientsChannelsCount);
+							Interlocked.Increment(ref clientsStreamsCount);
 						} else if (reliableToSend == 0 && reliableIncremented) {
 							reliableIncremented = false;
-							Interlocked.Decrement(ref clientsChannelsCount);
+							Interlocked.Decrement(ref clientsStreamsCount);
 						}
 
 						if (unreliableToSend > 0 && !unreliableIncremented) {
 							unreliableIncremented = true;
-							Interlocked.Increment(ref clientsChannelsCount);
+							Interlocked.Increment(ref clientsStreamsCount);
 						} else if (unreliableToSend == 0 && unreliableIncremented) {
 							unreliableIncremented = false;
-							Interlocked.Decrement(ref clientsChannelsCount);
+							Interlocked.Decrement(ref clientsStreamsCount);
 						}
 
 						await Task.Delay(1000 / sendRate);
@@ -961,18 +963,18 @@ namespace NX {
 
 						if (reliableToSend > 0 && !reliableIncremented) {
 							reliableIncremented = true;
-							Interlocked.Increment(ref clientsChannelsCount);
+							Interlocked.Increment(ref clientsStreamsCount);
 						} else if (reliableToSend == 0 && reliableIncremented) {
 							reliableIncremented = false;
-							Interlocked.Decrement(ref clientsChannelsCount);
+							Interlocked.Decrement(ref clientsStreamsCount);
 						}
 
 						if (unreliableToSend > 0 && !unreliableIncremented) {
 							unreliableIncremented = true;
-							Interlocked.Increment(ref clientsChannelsCount);
+							Interlocked.Increment(ref clientsStreamsCount);
 						} else if (unreliableToSend == 0 && unreliableIncremented) {
 							unreliableIncremented = false;
-							Interlocked.Decrement(ref clientsChannelsCount);
+							Interlocked.Decrement(ref clientsStreamsCount);
 						}
 
 						await Task.Delay(1000 / sendRate);
@@ -1086,18 +1088,18 @@ namespace NX {
 
 						if (reliableToSend > 0 && !reliableIncremented) {
 							reliableIncremented = true;
-							Interlocked.Increment(ref clientsChannelsCount);
+							Interlocked.Increment(ref clientsStreamsCount);
 						} else if (reliableToSend == 0 && reliableIncremented) {
 							reliableIncremented = false;
-							Interlocked.Decrement(ref clientsChannelsCount);
+							Interlocked.Decrement(ref clientsStreamsCount);
 						}
 
 						if (unreliableToSend > 0 && !unreliableIncremented) {
 							unreliableIncremented = true;
-							Interlocked.Increment(ref clientsChannelsCount);
+							Interlocked.Increment(ref clientsStreamsCount);
 						} else if (unreliableToSend == 0 && unreliableIncremented) {
 							unreliableIncremented = false;
-							Interlocked.Decrement(ref clientsChannelsCount);
+							Interlocked.Decrement(ref clientsStreamsCount);
 						}
 
 						await Task.Delay(1000 / sendRate);
@@ -1213,18 +1215,18 @@ namespace NX {
 
 						if (reliableToSend > 0 && !reliableIncremented) {
 							reliableIncremented = true;
-							Interlocked.Increment(ref clientsChannelsCount);
+							Interlocked.Increment(ref clientsStreamsCount);
 						} else if (reliableToSend == 0 && reliableIncremented) {
 							reliableIncremented = false;
-							Interlocked.Decrement(ref clientsChannelsCount);
+							Interlocked.Decrement(ref clientsStreamsCount);
 						}
 
 						if (unreliableToSend > 0 && !unreliableIncremented) {
 							unreliableIncremented = true;
-							Interlocked.Increment(ref clientsChannelsCount);
+							Interlocked.Increment(ref clientsStreamsCount);
 						} else if (unreliableToSend == 0 && unreliableIncremented) {
 							unreliableIncremented = false;
-							Interlocked.Decrement(ref clientsChannelsCount);
+							Interlocked.Decrement(ref clientsStreamsCount);
 						}
 
 						await Task.Delay(1000 / sendRate);
@@ -1370,18 +1372,18 @@ namespace NX {
 
 						if (reliableToSend > 0 && !reliableIncremented) {
 							reliableIncremented = true;
-							Interlocked.Increment(ref clientsChannelsCount);
+							Interlocked.Increment(ref clientsStreamsCount);
 						} else if (reliableToSend == 0 && reliableIncremented) {
 							reliableIncremented = false;
-							Interlocked.Decrement(ref clientsChannelsCount);
+							Interlocked.Decrement(ref clientsStreamsCount);
 						}
 
 						if (unreliableToSend > 0 && !unreliableIncremented) {
 							unreliableIncremented = true;
-							Interlocked.Increment(ref clientsChannelsCount);
+							Interlocked.Increment(ref clientsStreamsCount);
 						} else if (unreliableToSend == 0 && unreliableIncremented) {
 							unreliableIncremented = false;
-							Interlocked.Decrement(ref clientsChannelsCount);
+							Interlocked.Decrement(ref clientsStreamsCount);
 						}
 
 						await Task.Delay(1000 / sendRate);
@@ -1510,18 +1512,18 @@ namespace NX {
 
 						if (reliableToSend > 0 && !reliableIncremented) {
 							reliableIncremented = true;
-							Interlocked.Increment(ref clientsChannelsCount);
+							Interlocked.Increment(ref clientsStreamsCount);
 						} else if (reliableToSend == 0 && reliableIncremented) {
 							reliableIncremented = false;
-							Interlocked.Decrement(ref clientsChannelsCount);
+							Interlocked.Decrement(ref clientsStreamsCount);
 						}
 
 						if (unreliableToSend > 0 && !unreliableIncremented) {
 							unreliableIncremented = true;
-							Interlocked.Increment(ref clientsChannelsCount);
+							Interlocked.Increment(ref clientsStreamsCount);
 						} else if (unreliableToSend == 0 && unreliableIncremented) {
 							unreliableIncremented = false;
-							Interlocked.Decrement(ref clientsChannelsCount);
+							Interlocked.Decrement(ref clientsStreamsCount);
 						}
 
 						await Task.Delay(1000 / sendRate);
@@ -1656,18 +1658,18 @@ namespace NX {
 
 						if (reliableToSend > 0 && !reliableIncremented) {
 							reliableIncremented = true;
-							Interlocked.Increment(ref clientsChannelsCount);
+							Interlocked.Increment(ref clientsStreamsCount);
 						} else if (reliableToSend == 0 && reliableIncremented) {
 							reliableIncremented = false;
-							Interlocked.Decrement(ref clientsChannelsCount);
+							Interlocked.Decrement(ref clientsStreamsCount);
 						}
 
 						if (unreliableToSend > 0 && !unreliableIncremented) {
 							unreliableIncremented = true;
-							Interlocked.Increment(ref clientsChannelsCount);
+							Interlocked.Increment(ref clientsStreamsCount);
 						} else if (unreliableToSend == 0 && unreliableIncremented) {
 							unreliableIncremented = false;
-							Interlocked.Decrement(ref clientsChannelsCount);
+							Interlocked.Decrement(ref clientsStreamsCount);
 						}
 
 						await Task.Delay(1000 / sendRate);
