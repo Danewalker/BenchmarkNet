@@ -347,6 +347,7 @@ namespace NX {
 					} else {
 						spinnerTimer++;
 					}
+
 					switch (spinnerSequence % 4) {
 						case 0: Console.WriteLine(spinner[0]);
 							break;
@@ -437,7 +438,7 @@ namespace NX {
 		}
 	}
 
-	public class ENetBenchmark : BenchmarkNet {
+	public sealed class ENetBenchmark : BenchmarkNet {
 		private static void SendReliable(byte[] data, byte channelID, Peer peer) {
 			Packet packet = new Packet();
 
@@ -464,6 +465,7 @@ namespace NX {
 
 			while (processActive) {
 				server.Service(1000 / serverTickRate, out netEvent);
+
 				switch (netEvent.Type) {
 					case EventType.Receive:
 						if (netEvent.ChannelID == 2) {
@@ -548,6 +550,7 @@ namespace NX {
 
 				while (processActive) {
 					client.Service(1000 / clientTickRate, out netEvent);
+
 					switch (netEvent.Type) {
 						case EventType.Connect:
 							Interlocked.Increment(ref clientsConnectedCount);
@@ -583,7 +586,7 @@ namespace NX {
 		}
 	}
 
-	public class UNetBenchmark : BenchmarkNet {
+	public sealed class UNetBenchmark : BenchmarkNet {
 		public static void Server() {
 			GlobalConfig globalConfig = new GlobalConfig();
 
@@ -744,7 +747,7 @@ namespace NX {
 		}
 	}
 
-	public class LiteNetLibBenchmark : BenchmarkNet {
+	public sealed class LiteNetLibBenchmark : BenchmarkNet {
 		private static void SendReliable(byte[] data, LiteNetLib.NetPeer peer) {
 			peer.Send(data, DeliveryMethod.ReliableOrdered); // Reliable Ordered (https://github.com/RevenantX/LiteNetLib/issues/68)
 		}
@@ -875,7 +878,7 @@ namespace NX {
 		}
 	}
 
-	public class LidgrenBenchmark : BenchmarkNet {
+	public sealed class LidgrenBenchmark : BenchmarkNet {
 		private static void SendReliable(byte[] data, NetConnection connection, NetOutgoingMessage netMessage, int channelID) {
 			netMessage.Write(data);
 			connection.SendMessage(netMessage, NetDeliveryMethod.ReliableSequenced, channelID);
@@ -1024,7 +1027,7 @@ namespace NX {
 		}
 	}
 
-	public class MiniUDPBenchmark : BenchmarkNet {
+	public sealed class MiniUDPBenchmark : BenchmarkNet {
 		public static void Server() {
 			NetCore server = new NetCore(title, true);
 
@@ -1138,7 +1141,7 @@ namespace NX {
 		}
 	}
 
-	public class HazelBenchmark : BenchmarkNet {
+	public sealed class HazelBenchmark : BenchmarkNet {
 		public static void Server() {
 			UdpConnectionListener server = new UdpConnectionListener(new NetworkEndPoint(ip, port));
 
@@ -1269,7 +1272,7 @@ namespace NX {
 		}
 	}
 
-	public class PhotonBenchmark : BenchmarkNet {
+	public sealed class PhotonBenchmark : BenchmarkNet {
 		private class PhotonPeerListener : IPhotonPeerListener {
 			public event Action OnConnected;
 			public event Action OnDisconnected;
@@ -1422,7 +1425,7 @@ namespace NX {
 		}
 	}
 
-	public class NeutrinoBenchmark : BenchmarkNet {
+	public sealed class NeutrinoBenchmark : BenchmarkNet {
 		private class ReliableMessage : NetworkMessage {
 			public ReliableMessage() {
 				IsGuaranteed = true;
@@ -1564,7 +1567,7 @@ namespace NX {
 		}
 	}
 
-	public class DarkRiftBenchmark : BenchmarkNet {
+	public sealed class DarkRiftBenchmark : BenchmarkNet {
 		public static void Server() {
 			DarkRiftServer server = new DarkRiftServer(new ServerSpawnData(IPAddress.Parse(ip), port, IPVersion.IPv4));
 
