@@ -486,9 +486,9 @@ namespace NX {
 						} else if (netEvent.ChannelID == 3) {
 							Interlocked.Increment(ref serverUnreliableReceived);
 							Interlocked.Add(ref serverUnreliableBytesReceived, netEvent.Packet.Length);
-							SendUnreliable(messageData, 1, netEvent.Peer);
+							SendUnreliable(reversedData, 1, netEvent.Peer);
 							Interlocked.Increment(ref serverUnreliableSent);
-							Interlocked.Add(ref serverUnreliableBytesSent, messageData.Length);
+							Interlocked.Add(ref serverUnreliableBytesSent, reversedData.Length);
 						}
 
 						netEvent.Packet.Dispose();
@@ -530,11 +530,11 @@ namespace NX {
 						}
 
 						if (unreliableToSend > 0) {
-							SendUnreliable(messageData, 3, peer);
+							SendUnreliable(reversedData, 3, peer);
 							Interlocked.Decrement(ref unreliableToSend);
 							Interlocked.Increment(ref unreliableSentCount);
 							Interlocked.Increment(ref clientsUnreliableSent);
-							Interlocked.Add(ref clientsUnreliableBytesSent, messageData.Length);
+							Interlocked.Add(ref clientsUnreliableBytesSent, reversedData.Length);
 						}
 
 						if (reliableToSend > 0 && !reliableIncremented) {
@@ -635,9 +635,9 @@ namespace NX {
 							} else if (channelID == 1) {
 								Interlocked.Increment(ref serverUnreliableReceived);
 								Interlocked.Add(ref serverUnreliableBytesReceived, dataLength);
-								server.Send(hostID, connectionID, unreliableChannel, messageData, messageData.Length, out error);
+								server.Send(hostID, connectionID, unreliableChannel, reversedData, reversedData.Length, out error);
 								Interlocked.Increment(ref serverUnreliableSent);
-								Interlocked.Add(ref serverUnreliableBytesSent, messageData.Length);
+								Interlocked.Add(ref serverUnreliableBytesSent, reversedData.Length);
 							}
 
 							break;
@@ -683,11 +683,11 @@ namespace NX {
 						}
 
 						if (unreliableToSend > 0) {
-							client.Send(host, connection, unreliableChannel, messageData, messageData.Length, out error);
+							client.Send(host, connection, unreliableChannel, reversedData, reversedData.Length, out error);
 							Interlocked.Decrement(ref unreliableToSend);
 							Interlocked.Increment(ref unreliableSentCount);
 							Interlocked.Increment(ref clientsUnreliableSent);
-							Interlocked.Add(ref clientsUnreliableBytesSent, messageData.Length);
+							Interlocked.Add(ref clientsUnreliableBytesSent, reversedData.Length);
 						}
 
 						if (reliableToSend > 0 && !reliableIncremented) {
@@ -786,9 +786,9 @@ namespace NX {
 				} else if (deliveryMethod == DeliveryMethod.Sequenced) {
 					Interlocked.Increment(ref serverUnreliableReceived);
 					Interlocked.Add(ref serverUnreliableBytesReceived, reader.AvailableBytes);
-					SendUnreliable(messageData, peer);
+					SendUnreliable(reversedData, peer);
 					Interlocked.Increment(ref serverUnreliableSent);
-					Interlocked.Add(ref serverUnreliableBytesSent, messageData.Length);
+					Interlocked.Add(ref serverUnreliableBytesSent, reversedData.Length);
 				}
 			};
 
@@ -828,11 +828,11 @@ namespace NX {
 						}
 
 						if (unreliableToSend > 0) {
-							SendUnreliable(messageData, client.GetFirstPeer());
+							SendUnreliable(reversedData, client.GetFirstPeer());
 							Interlocked.Decrement(ref unreliableToSend);
 							Interlocked.Increment(ref unreliableSentCount);
 							Interlocked.Increment(ref clientsUnreliableSent);
-							Interlocked.Add(ref clientsUnreliableBytesSent, messageData.Length);
+							Interlocked.Add(ref clientsUnreliableBytesSent, reversedData.Length);
 						}
 
 						if (reliableToSend > 0 && !reliableIncremented) {
@@ -922,9 +922,9 @@ namespace NX {
 							} else if (netMessage.SequenceChannel == 3) {
 								Interlocked.Increment(ref serverUnreliableReceived);
 								Interlocked.Add(ref serverUnreliableBytesReceived, netMessage.LengthBytes);
-								SendUnreliable(messageData, netMessage.SenderConnection, server.CreateMessage(), 1);
+								SendUnreliable(reversedData, netMessage.SenderConnection, server.CreateMessage(), 1);
 								Interlocked.Increment(ref serverUnreliableSent);
-								Interlocked.Add(ref serverUnreliableBytesSent, messageData.Length);
+								Interlocked.Add(ref serverUnreliableBytesSent, reversedData.Length);
 							}
 
 							break;
@@ -966,11 +966,11 @@ namespace NX {
 						}
 
 						if (unreliableToSend > 0) {
-							SendUnreliable(messageData, client.ServerConnection, client.CreateMessage(), 3);
+							SendUnreliable(reversedData, client.ServerConnection, client.CreateMessage(), 3);
 							Interlocked.Decrement(ref unreliableToSend);
 							Interlocked.Increment(ref unreliableSentCount);
 							Interlocked.Increment(ref clientsUnreliableSent);
-							Interlocked.Add(ref clientsUnreliableBytesSent, messageData.Length);
+							Interlocked.Add(ref clientsUnreliableBytesSent, reversedData.Length);
 						}
 
 						if (reliableToSend > 0 && !reliableIncremented) {
@@ -1053,9 +1053,9 @@ namespace NX {
 			server.PeerPayload += (peer, data, dataLength) => {
 				Interlocked.Increment(ref serverUnreliableReceived);
 				Interlocked.Add(ref serverUnreliableBytesReceived, dataLength);
-				peer.SendPayload(messageData, (ushort)messageData.Length);
+				peer.SendPayload(reversedData, (ushort)reversedData.Length);
 				Interlocked.Increment(ref serverUnreliableSent);
-				Interlocked.Add(ref serverUnreliableBytesSent, messageData.Length);
+				Interlocked.Add(ref serverUnreliableBytesSent, reversedData.Length);
 			};
 
 			while (processActive) {
@@ -1091,11 +1091,11 @@ namespace NX {
 						}
 
 						if (unreliableToSend > 0) {
-							connection.SendPayload(messageData, (ushort)messageData.Length);
+							connection.SendPayload(reversedData, (ushort)reversedData.Length);
 							Interlocked.Decrement(ref unreliableToSend);
 							Interlocked.Increment(ref unreliableSentCount);
 							Interlocked.Increment(ref clientsUnreliableSent);
-							Interlocked.Add(ref clientsUnreliableBytesSent, messageData.Length);
+							Interlocked.Add(ref clientsUnreliableBytesSent, reversedData.Length);
 						}
 
 						if (reliableToSend > 0 && !reliableIncremented) {
@@ -1174,9 +1174,9 @@ namespace NX {
 						Interlocked.Add(ref serverUnreliableBytesReceived, data.Bytes.Length);
 
 						if (client.State == Hazel.ConnectionState.Connected) {
-							client.SendBytes(messageData, SendOption.None);
+							client.SendBytes(reversedData, SendOption.None);
 							Interlocked.Increment(ref serverUnreliableSent);
-							Interlocked.Add(ref serverUnreliableBytesSent, messageData.Length);
+							Interlocked.Add(ref serverUnreliableBytesSent, reversedData.Length);
 						}
 					}
 
@@ -1218,11 +1218,11 @@ namespace NX {
 						}
 
 						if (unreliableToSend > 0) {
-							client.SendBytes(messageData, SendOption.None);
+							client.SendBytes(reversedData, SendOption.None);
 							Interlocked.Decrement(ref unreliableToSend);
 							Interlocked.Increment(ref unreliableSentCount);
 							Interlocked.Increment(ref clientsUnreliableSent);
-							Interlocked.Add(ref clientsUnreliableBytesSent, messageData.Length);
+							Interlocked.Add(ref clientsUnreliableBytesSent, reversedData.Length);
 						}
 
 						if (reliableToSend > 0 && !reliableIncremented) {
@@ -1476,7 +1476,7 @@ namespace NX {
 					Interlocked.Add(ref serverUnreliableBytesReceived, unreliableMessage.Message.Length);
 					peer.SendNetworkMessage(server.GetMessage<UnreliableMessage>());
 					Interlocked.Increment(ref serverUnreliableSent);
-					Interlocked.Add(ref serverUnreliableBytesSent, messageData.Length);
+					Interlocked.Add(ref serverUnreliableBytesSent, reversedData.Length);
 				}
 			};
 
@@ -1603,15 +1603,15 @@ namespace NX {
 								Interlocked.Increment(ref serverUnreliableReceived);
 								Interlocked.Add(ref serverUnreliableBytesReceived, reader.Length);
 
-								using (DarkRiftWriter writer = DarkRiftWriter.Create(messageData.Length)) {
-									writer.WriteRaw(messageData, 0, messageData.Length);
+								using (DarkRiftWriter writer = DarkRiftWriter.Create(reversedData.Length)) {
+									writer.WriteRaw(reversedData, 0, reversedData.Length);
 
 									using (Message unreliableMessage = Message.Create(0, writer))
 										data.Client.SendMessage(unreliableMessage, SendMode.Unreliable);
 								}
 
 								Interlocked.Increment(ref serverUnreliableSent);
-								Interlocked.Add(ref serverUnreliableBytesSent, messageData.Length);
+								Interlocked.Add(ref serverUnreliableBytesSent, reversedData.Length);
 							}
 						}
 					}
@@ -1655,8 +1655,8 @@ namespace NX {
 						}
 
 						if (unreliableToSend > 0) {
-							using (DarkRiftWriter writer = DarkRiftWriter.Create(messageData.Length)) {
-								writer.WriteRaw(messageData, 0, messageData.Length);
+							using (DarkRiftWriter writer = DarkRiftWriter.Create(reversedData.Length)) {
+								writer.WriteRaw(reversedData, 0, reversedData.Length);
 
 								using (Message message = Message.Create(0, writer))
 									client.SendMessage(message, SendMode.Unreliable);
@@ -1665,7 +1665,7 @@ namespace NX {
 							Interlocked.Decrement(ref unreliableToSend);
 							Interlocked.Increment(ref unreliableSentCount);
 							Interlocked.Increment(ref clientsUnreliableSent);
-							Interlocked.Add(ref clientsUnreliableBytesSent, messageData.Length);
+							Interlocked.Add(ref clientsUnreliableBytesSent, reversedData.Length);
 						}
 
 						if (reliableToSend > 0 && !reliableIncremented) {
