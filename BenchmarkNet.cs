@@ -80,6 +80,9 @@ namespace NX {
 		// Modes
 		protected static bool instantMode = false;
 		protected static bool lowLatencyMode = false;
+		// Debug
+		protected static bool disableInfo = false;
+		protected static bool disableSupervisor = false;
 		// Passes
 		protected static bool maxClientsPass = true;
 		// Threads
@@ -135,6 +138,12 @@ namespace NX {
 
 				if (argument == "-lowlatency")
 					lowLatencyMode = true;
+
+				if (argument == "-disable-info")
+					disableInfo = true;
+
+				if (argument == "-disable-supervisor")
+					disableSupervisor = true;
 			}
 
 			Console.SetIn(new StreamReader(Console.OpenStandardInput(8192), Console.InputEncoding, false, bufferSize: 1024));
@@ -264,8 +273,8 @@ namespace NX {
 			serverThread.Start();
 			Thread.Sleep(100);
 
-			Task infoTask = Info();
-			Task superviseTask = Supervise();
+			Task infoTask = disableInfo ? null : Info();
+			Task superviseTask = disableSupervisor ? null : Supervise();
 			Task spawnTask = Spawn();
 
 			Console.ReadKey();
