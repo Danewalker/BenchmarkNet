@@ -146,6 +146,7 @@ namespace NX {
 					disableSupervisor = true;
 			}
 
+			Start:
 			Console.SetIn(new StreamReader(Console.OpenStandardInput(8192), Console.InputEncoding, false, bufferSize: 1024));
 			Console.WriteLine("Welcome to " + title + Space(1) + version + "!");
 
@@ -166,6 +167,35 @@ namespace NX {
 
 			Console.Write(Environment.NewLine + "Enter the number (default 0): ");
 			Byte.TryParse(Console.ReadLine(), out selectedLibrary);
+
+			if (selectedLibrary == 0)
+				serverThread = new Thread(ENetBenchmark.Server);
+			else if (selectedLibrary == 1)
+				serverThread = new Thread(UNetBenchmark.Server);
+			else if (selectedLibrary == 2)
+				serverThread = new Thread(LiteNetLibBenchmark.Server);
+			else if (selectedLibrary == 3)
+				serverThread = new Thread(LidgrenBenchmark.Server);
+			else if (selectedLibrary == 4)
+				serverThread = new Thread(MiniUDPBenchmark.Server);
+			else if (selectedLibrary == 5)
+				serverThread = new Thread(HazelBenchmark.Server);
+			else if (selectedLibrary == 6)
+				serverThread = new Thread(PhotonBenchmark.Server);
+			else if (selectedLibrary == 7)
+				serverThread = new Thread(NeutrinoBenchmark.Server);
+			else if (selectedLibrary == 8)
+				serverThread = new Thread(DarkRiftBenchmark.Server);
+
+			if (serverThread == null) {
+				Console.ForegroundColor = ConsoleColor.Red;
+				Console.WriteLine("Please, enter a valid number of the networking library!");
+				Console.ReadKey();
+				Console.ResetColor();
+				Console.Clear();
+				
+				goto Start;
+			}
 
 			const ushort defaultPort = 9500;
 			const ushort defaultMaxClients = 1000;
@@ -249,25 +279,6 @@ namespace NX {
 
 			if (!maxClientsPass)
 				maxClients = Math.Min(Math.Max((ushort)1, (ushort)maxClients), (selectedLibrary > 0 ? maxPeers : (ushort)ENet.Native.ENET_PROTOCOL_MAXIMUM_PEER_ID));
-
-			if (selectedLibrary == 0)
-				serverThread = new Thread(ENetBenchmark.Server);
-			else if (selectedLibrary == 1)
-				serverThread = new Thread(UNetBenchmark.Server);
-			else if (selectedLibrary == 2)
-				serverThread = new Thread(LiteNetLibBenchmark.Server);
-			else if (selectedLibrary == 3)
-				serverThread = new Thread(LidgrenBenchmark.Server);
-			else if (selectedLibrary == 4)
-				serverThread = new Thread(MiniUDPBenchmark.Server);
-			else if (selectedLibrary == 5)
-				serverThread = new Thread(HazelBenchmark.Server);
-			else if (selectedLibrary == 6)
-				serverThread = new Thread(PhotonBenchmark.Server);
-			else if (selectedLibrary == 7)
-				serverThread = new Thread(NeutrinoBenchmark.Server);
-			else
-				serverThread = new Thread(DarkRiftBenchmark.Server);
 
 			serverThread.Priority = ThreadPriority.AboveNormal;
 			serverThread.Start();
@@ -437,7 +448,7 @@ namespace NX {
 						clients[i] = PhotonBenchmark.Client();
 					else if (selectedLibrary == 7)
 						clients[i] = NeutrinoBenchmark.Client();
-					else
+					else if (selectedLibrary == 8)
 						clients[i] = DarkRiftBenchmark.Client();
 
 					Interlocked.Increment(ref clientsStartedCount);
