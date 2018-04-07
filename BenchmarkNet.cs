@@ -482,10 +482,8 @@ namespace NX {
 
 			server.Create(address, maxClients, 4);
 
-			Event netEvent = new Event();
-
 			while (processActive) {
-				server.Service(1000 / serverTickRate, out netEvent);
+				server.Service(1000 / serverTickRate, out Event netEvent);
 
 				switch (netEvent.Type) {
 					case EventType.Receive:
@@ -521,7 +519,6 @@ namespace NX {
 				client.Create(null, 1);
 
 				Peer peer = client.Connect(address, 4, 0);
-				Event netEvent = new Event();
 
 				int reliableToSend = 0;
 				int unreliableToSend = 0;
@@ -570,7 +567,7 @@ namespace NX {
 				}, TaskCreationOptions.AttachedToParent);
 
 				while (processActive) {
-					client.Service(1000 / clientTickRate, out netEvent);
+					client.Service(1000 / clientTickRate, out Event netEvent);
 
 					switch (netEvent.Type) {
 						case EventType.Connect:
@@ -628,26 +625,23 @@ namespace NX {
 
 			int host = server.AddHost(topology, port, ip);
 
-			int hostID, connectionID, channelID, dataLength;
 			byte[] buffer = new byte[1024];
 			NetworkEventType netEvent;
 
 			while (processActive) {
-				byte error;
-
-				while ((netEvent = server.Receive(out hostID, out connectionID, out channelID, buffer, buffer.Length, out dataLength, out error)) != NetworkEventType.Nothing) {
+				while ((netEvent = server.Receive(out int hostID, out int connectionID, out int channelID, buffer, buffer.Length, out int dataLength, out byte netError)) != NetworkEventType.Nothing) {
 					switch (netEvent) {
 						case NetworkEventType.DataEvent:
 							if (channelID == 0) {
 								Interlocked.Increment(ref serverReliableReceived);
 								Interlocked.Add(ref serverReliableBytesReceived, dataLength);
-								server.Send(hostID, connectionID, reliableChannel, messageData, messageData.Length, out error);
+								server.Send(hostID, connectionID, reliableChannel, messageData, messageData.Length, out byte sendError);
 								Interlocked.Increment(ref serverReliableSent);
 								Interlocked.Add(ref serverReliableBytesSent, messageData.Length);
 							} else if (channelID == 1) {
 								Interlocked.Increment(ref serverUnreliableReceived);
 								Interlocked.Add(ref serverUnreliableBytesReceived, dataLength);
-								server.Send(hostID, connectionID, unreliableChannel, reversedData, reversedData.Length, out error);
+								server.Send(hostID, connectionID, unreliableChannel, reversedData, reversedData.Length, out byte sendError);
 								Interlocked.Increment(ref serverUnreliableSent);
 								Interlocked.Add(ref serverUnreliableBytesSent, reversedData.Length);
 							}
@@ -671,8 +665,7 @@ namespace NX {
 
 				int host = client.AddHost(new HostTopology(connectionConfig, 1), 0, null);
 
-				byte connectionError;
-				int connection = client.Connect(host, ip, port, 0, out connectionError);
+				int connection = client.Connect(host, ip, port, 0, out byte connectionError);
 
 				int reliableToSend = 0;
 				int unreliableToSend = 0;
@@ -684,10 +677,8 @@ namespace NX {
 					bool unreliableIncremented = false;
 
 					while (processActive) {
-						byte error;
-
 						if (reliableToSend > 0) {
-							client.Send(host, connection, reliableChannel, messageData, messageData.Length, out error);
+							client.Send(host, connection, reliableChannel, messageData, messageData.Length, out byte sendError);
 							Interlocked.Decrement(ref reliableToSend);
 							Interlocked.Increment(ref reliableSentCount);
 							Interlocked.Increment(ref clientsReliableSent);
@@ -695,7 +686,7 @@ namespace NX {
 						}
 
 						if (unreliableToSend > 0) {
-							client.Send(host, connection, unreliableChannel, reversedData, reversedData.Length, out error);
+							client.Send(host, connection, unreliableChannel, reversedData, reversedData.Length, out byte sendError);
 							Interlocked.Decrement(ref unreliableToSend);
 							Interlocked.Increment(ref unreliableSentCount);
 							Interlocked.Increment(ref clientsUnreliableSent);
@@ -722,14 +713,11 @@ namespace NX {
 					}
 				}, TaskCreationOptions.AttachedToParent);
 
-				int hostID, connectionID, channelID, dataLength;
 				byte[] buffer = new byte[1024];
 				NetworkEventType netEvent;
 
 				while (processActive) {
-					byte error;
-
-					while ((netEvent = client.Receive(out hostID, out connectionID, out channelID, buffer, buffer.Length, out dataLength, out error)) != NetworkEventType.Nothing) {
+					while ((netEvent = client.Receive(out int hostID, out int connectionID, out int channelID, buffer, buffer.Length, out int dataLength, out byte error)) != NetworkEventType.Nothing) {
 						switch (netEvent) {
 							case NetworkEventType.ConnectEvent:
 								Interlocked.Increment(ref clientsConnectedCount);
@@ -761,9 +749,7 @@ namespace NX {
 					Thread.Sleep(1000 / clientTickRate);
 				}
 
-				byte disconnectError;
-
-				client.Disconnect(host, connection, out disconnectError);
+				client.Disconnect(host, connection, out byte disconnectError);
 			}, TaskCreationOptions.LongRunning);
 		}
 	}
