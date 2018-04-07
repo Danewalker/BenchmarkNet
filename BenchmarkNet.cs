@@ -146,8 +146,9 @@ namespace NX {
 					disableSupervisor = true;
 			}
 
-			Start:
 			Console.SetIn(new StreamReader(Console.OpenStandardInput(8192), Console.InputEncoding, false, bufferSize: 1024));
+
+			Start:
 			Console.WriteLine("Welcome to " + title + Space(1) + version + "!");
 
 			Console.WriteLine(Environment.NewLine + "Source code is available on GitHub (https://github.com/nxrighthere/BenchmarkNet)");
@@ -193,7 +194,7 @@ namespace NX {
 				Console.ReadKey();
 				Console.ResetColor();
 				Console.Clear();
-				
+
 				goto Start;
 			}
 
@@ -1591,8 +1592,6 @@ namespace NX {
 		public static void Server() {
 			DarkRiftServer server = new DarkRiftServer(new ServerSpawnData(IPAddress.Parse(ip), port, IPVersion.IPv4));
 
-			server.Start();
-
 			server.ClientManager.ClientConnected += (peer, netEvent) => {
 				netEvent.Client.MessageReceived += (sender, data) => {
 					using (Message message = data.GetMessage()) {
@@ -1628,6 +1627,8 @@ namespace NX {
 					}
 				};
 			};
+
+			server.Start();
 
 			while (processActive) {
 				server.ExecuteDispatcherTasks();
