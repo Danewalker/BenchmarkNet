@@ -717,7 +717,7 @@ namespace NX {
 				NetworkEventType netEvent;
 
 				while (processActive) {
-					while ((netEvent = client.Receive(out int hostID, out int connectionID, out int channelID, buffer, buffer.Length, out int dataLength, out byte error)) != NetworkEventType.Nothing) {
+					while ((netEvent = client.Receive(out int hostID, out int connectionID, out int channelID, buffer, buffer.Length, out int dataLength, out byte netError)) != NetworkEventType.Nothing) {
 						switch (netEvent) {
 							case NetworkEventType.ConnectEvent:
 								Interlocked.Increment(ref clientsConnectedCount);
@@ -1152,8 +1152,6 @@ namespace NX {
 		public static void Server() {
 			UdpConnectionListener server = new UdpConnectionListener(new NetworkEndPoint(ip, port));
 
-			server.Start();
-
 			server.NewConnection += (peer, netEvent) => {
 				netEvent.Connection.DataReceived += (sender, data) => {
 					Connection client = (Connection)sender;
@@ -1183,6 +1181,8 @@ namespace NX {
 
 				netEvent.Recycle();
 			};
+
+			server.Start();
 
 			while (processActive) {
 				Thread.Sleep(1000 / serverTickRate);
