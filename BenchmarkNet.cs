@@ -664,7 +664,6 @@ namespace NX {
 				NetLibraryManager client = new NetLibraryManager();
 
 				int host = client.AddHost(new HostTopology(connectionConfig, 1), 0, null);
-
 				int connection = client.Connect(host, ip, port, 0, out byte connectionError);
 
 				int reliableToSend = 0;
@@ -1457,6 +1456,8 @@ namespace NX {
 
 		public static void Server() {
 			Node server = new Node(port, typeof(NeutrinoBenchmark).Assembly);
+
+			NeutrinoConfig.PeerTimeoutMillis = 120000;
 
 			server.OnReceived += (message) => {
 				NetworkPeer peer = message.Source;
