@@ -754,14 +754,6 @@ namespace NX {
 	}
 
 	public sealed class LiteNetLibBenchmark : BenchmarkNet {
-		private static void SendReliable(byte[] data, LiteNetLib.NetPeer peer) {
-			peer.Send(data, DeliveryMethod.ReliableOrdered); // Reliable Ordered (https://github.com/RevenantX/LiteNetLib/issues/68)
-		}
-
-		private static void SendUnreliable(byte[] data, LiteNetLib.NetPeer peer) {
-			peer.Send(data, DeliveryMethod.Sequenced); // Unreliable Sequenced
-		}
-
 		public static void Server() {
 			EventBasedNetListener listener = new EventBasedNetListener();
 			NetManager server = new NetManager(listener, maxClients);
@@ -777,13 +769,13 @@ namespace NX {
 				if (deliveryMethod == DeliveryMethod.ReliableOrdered) {
 					Interlocked.Increment(ref serverReliableReceived);
 					Interlocked.Add(ref serverReliableBytesReceived, reader.AvailableBytes);
-					SendReliable(messageData, peer);
+					peer.Send(messageData, DeliveryMethod.ReliableOrdered);
 					Interlocked.Increment(ref serverReliableSent);
 					Interlocked.Add(ref serverReliableBytesSent, messageData.Length);
 				} else if (deliveryMethod == DeliveryMethod.Sequenced) {
 					Interlocked.Increment(ref serverUnreliableReceived);
 					Interlocked.Add(ref serverUnreliableBytesReceived, reader.AvailableBytes);
-					SendUnreliable(reversedData, peer);
+					peer.Send(reversedData, DeliveryMethod.Sequenced);
 					Interlocked.Increment(ref serverUnreliableSent);
 					Interlocked.Add(ref serverUnreliableBytesSent, reversedData.Length);
 				}
@@ -806,6 +798,8 @@ namespace NX {
 				client.Start();
 				client.Connect(ip, port, title + "Key");
 
+				LiteNetLib.NetPeer connection = client.GetFirstPeer();
+
 				int reliableToSend = 0;
 				int unreliableToSend = 0;
 				int reliableSentCount = 0;
@@ -817,7 +811,7 @@ namespace NX {
 
 					while (processActive) {
 						if (reliableToSend > 0) {
-							SendReliable(messageData, client.GetFirstPeer());
+							connection.Send(messageData, DeliveryMethod.ReliableOrdered);
 							Interlocked.Decrement(ref reliableToSend);
 							Interlocked.Increment(ref reliableSentCount);
 							Interlocked.Increment(ref clientsReliableSent);
@@ -825,7 +819,7 @@ namespace NX {
 						}
 
 						if (unreliableToSend > 0) {
-							SendUnreliable(reversedData, client.GetFirstPeer());
+							connection.Send(reversedData, DeliveryMethod.Sequenced);
 							Interlocked.Decrement(ref unreliableToSend);
 							Interlocked.Increment(ref unreliableSentCount);
 							Interlocked.Increment(ref clientsUnreliableSent);
