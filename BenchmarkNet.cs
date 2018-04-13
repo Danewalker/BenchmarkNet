@@ -314,7 +314,7 @@ namespace NX {
 					"Benchmarking " + networkingLibraries[selectedLibrary] + "...",
 					"Server tick rate: " + serverTickRate + ", Client tick rate: " + clientTickRate + " (ticks per second)",
 					maxClients + " clients, " + reliableMessages + " reliable and " + unreliableMessages + " unreliable messages per client, " + messageData.Length + " bytes per message, " + sendRate + " messages per second",
-					"GC mode: " + (!GCSettings.IsServerGC ? "Workstation" : "Server") + " GC",
+					"GC mode: " + (!GCSettings.IsServerGC ? "Workstation" : "Server"),
 					"This networking library doesn't support more than " + (selectedLibrary > 0 ? maxPeers : ENet.Native.ENET_PROTOCOL_MAXIMUM_PEER_ID).ToString() + " peers per server!",
 					"The process is performing in Sustained Low Latency mode.",
 				};
