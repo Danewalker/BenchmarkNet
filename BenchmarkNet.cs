@@ -57,7 +57,7 @@ namespace NX {
 	public abstract class BenchmarkNet {
 		// Meta
 		protected const string title = "BenchmarkNet";
-		protected const string version = "1.08";
+		protected const string version = "1.09";
 		// Parameters
 		protected const string ip = "127.0.0.1";
 		protected static ushort port = 0;
@@ -148,7 +148,7 @@ namespace NX {
 
 			Console.SetIn(new StreamReader(Console.OpenStandardInput(8192), Console.InputEncoding, false, bufferSize: 1024));
 
-			Start:
+Start:
 			Console.WriteLine("Welcome to " + title + Space(1) + version + "!");
 
 			Console.WriteLine(Environment.NewLine + "Source code is available on GitHub (https://github.com/nxrighthere/BenchmarkNet)");
@@ -298,6 +298,7 @@ namespace NX {
 			await Task.Factory.StartNew(() => {
 				int spinnerTimer = 0;
 				int spinnerSequence = 0;
+				string space = Space(10);
 				string[] spinner = {
 					"/",
 					"—",
@@ -352,7 +353,7 @@ namespace NX {
 					info.Clear();
 					info.AppendLine().Append("Server status: ").Append((processFailure || !serverThread.IsAlive ? status[1] : (processOverload ? status[2] : (processCompleted ? status[3] : status[0]))));
 					info.AppendLine().Append("Clients status: ").Append(clientsStartedCount).Append(" started, ").Append(clientsConnectedCount).Append(" connected, ").Append(clientsDisconnectedCount).Append(" dropped");
-					info.AppendLine().Append("Server payload flow: ").Append(PayloadFlow(clientsStreamsCount, messageData.Length, sendRate).ToString("0.00")).Append(" mbps \\ ").Append(PayloadFlow(maxClients * 2, messageData.Length, sendRate).ToString("0.00")).Append(" mbps").Append(Space(10));
+					info.AppendLine().Append("Server payload flow: ").Append(PayloadFlow(clientsStreamsCount, messageData.Length, sendRate).ToString("0.00")).Append(" mbps \\ ").Append(PayloadFlow(maxClients * 2, messageData.Length, sendRate).ToString("0.00")).Append(" mbps").Append(space);
 					info.AppendLine().Append("Clients sent -> Reliable: ").Append(clientsReliableSent).Append(" messages (").Append(clientsReliableBytesSent).Append(" bytes), Unreliable: ").Append(clientsUnreliableSent).Append(" messages (").Append(clientsUnreliableBytesSent).Append(" bytes)");
 					info.AppendLine().Append("Server received <- Reliable: ").Append(serverReliableReceived).Append(" messages (").Append(serverReliableBytesReceived).Append(" bytes), Unreliable: ").Append(serverUnreliableReceived).Append(" messages (").Append(serverUnreliableBytesReceived).Append(" bytes)");
 					info.AppendLine().Append("Server sent -> Reliable: ").Append(serverReliableSent).Append(" messages (").Append(serverReliableBytesSent).Append(" bytes), Unreliable: ").Append(serverUnreliableSent).Append(" messages (").Append(serverUnreliableBytesSent).Append(" bytes)");
@@ -394,12 +395,13 @@ namespace NX {
 
 		private static async Task Supervise() {
 			await Task.Factory.StartNew(() => {
+				decimal currentData = 0;
 				decimal lastData = 0;
 
 				while (processActive) {
 					Thread.Sleep(1000);
 
-					decimal currentData = ((decimal)serverReliableSent + (decimal)serverReliableReceived + (decimal)serverUnreliableSent + (decimal)serverUnreliableReceived + (decimal)clientsReliableSent + (decimal)clientsReliableReceived + (decimal)clientsUnreliableSent + (decimal)clientsUnreliableReceived);
+					currentData = ((decimal)serverReliableSent + (decimal)serverReliableReceived + (decimal)serverUnreliableSent + (decimal)serverUnreliableReceived + (decimal)clientsReliableSent + (decimal)clientsReliableReceived + (decimal)clientsUnreliableSent + (decimal)clientsUnreliableReceived);
 
 					if (currentData == lastData) {
 						if (currentData == 0)
