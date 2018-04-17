@@ -148,7 +148,7 @@ namespace NX {
 
 			Console.SetIn(new StreamReader(Console.OpenStandardInput(8192), Console.InputEncoding, false, bufferSize: 1024));
 
-Start:
+			Start:
 			Console.WriteLine("Welcome to " + title + Space(1) + version + "!");
 
 			Console.WriteLine(Environment.NewLine + "Source code is available on GitHub (https://github.com/nxrighthere/BenchmarkNet)");
@@ -1453,7 +1453,7 @@ Start:
 		public static void Server() {
 			Node server = new Node(port, typeof(NeutrinoBenchmark).Assembly);
 
-			NeutrinoConfig.PeerTimeoutMillis = 120000;
+			NeutrinoConfig.PeerTimeoutMillis = ((Math.Max(reliableMessages, unreliableMessages) / sendRate) * 2) * 1000;
 
 			server.OnReceived += (message) => {
 				NetworkPeer peer = message.Source;
