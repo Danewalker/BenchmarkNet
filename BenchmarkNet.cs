@@ -610,23 +610,32 @@ namespace NX {
 		public static void Server() {
 			GlobalConfig globalConfig = new GlobalConfig();
 
-			globalConfig.ReactorMaximumSentMessages = 0;
-			globalConfig.ReactorMaximumReceivedMessages = 0;
+			globalConfig.ThreadPoolSize = 4;
+			globalConfig.ThreadAwakeTimeout = (uint)serverTickRate;
+			globalConfig.MaxHosts = 1;
+			globalConfig.MaxPacketSize = (ushort)((messageData.Length * 2) + 32);
+			globalConfig.ReactorMaximumSentMessages = (ushort)((reliableMessages + unreliableMessages) * sendRate);;
+			globalConfig.ReactorMaximumReceivedMessages = (ushort)((reliableMessages + unreliableMessages) * sendRate);;
 
 			ConnectionConfig connectionConfig = new ConnectionConfig();
 
 			int reliableChannel = connectionConfig.AddChannel(QosType.ReliableSequenced);
 			int unreliableChannel = connectionConfig.AddChannel(QosType.UnreliableSequenced);
 
+			connectionConfig.SendDelay = 1;
+			connectionConfig.MinUpdateTimeout = 1;
+			connectionConfig.PingTimeout = 2000;
+			connectionConfig.DisconnectTimeout = 5000;
+			connectionConfig.PacketSize = (ushort)((messageData.Length * 2) + 32);
+
 			HostTopology topology = new HostTopology(connectionConfig, maxClients);
 
-			topology.SentMessagePoolSize = ushort.MaxValue;
-			topology.ReceivedMessagePoolSize = ushort.MaxValue;
+			topology.SentMessagePoolSize = (ushort)((reliableMessages + unreliableMessages) * sendRate);
+			topology.ReceivedMessagePoolSize = (ushort)((reliableMessages + unreliableMessages) * sendRate);
 
 			NetLibraryManager server = new NetLibraryManager(globalConfig);
 
 			int host = server.AddHost(topology, port, ip);
-
 			byte[] buffer = new byte[1024];
 			NetworkEventType netEvent;
 
@@ -658,14 +667,34 @@ namespace NX {
 
 		public static async Task Client() {
 			await Task.Factory.StartNew(() => {
+				GlobalConfig globalConfig = new GlobalConfig();
+
+				globalConfig.ThreadPoolSize = 1;
+				globalConfig.ThreadAwakeTimeout = (uint)clientTickRate;
+				globalConfig.MaxHosts = 1;
+				globalConfig.MaxPacketSize = (ushort)((messageData.Length * 2) + 32);
+				globalConfig.ReactorMaximumSentMessages = (ushort)(sendRate / 2);
+				globalConfig.ReactorMaximumReceivedMessages = (ushort)(sendRate / 2);
+
 				ConnectionConfig connectionConfig = new ConnectionConfig();
 
 				int reliableChannel = connectionConfig.AddChannel(QosType.ReliableSequenced);
 				int unreliableChannel = connectionConfig.AddChannel(QosType.UnreliableSequenced);
 
-				NetLibraryManager client = new NetLibraryManager();
+				connectionConfig.SendDelay = 1;
+				connectionConfig.MinUpdateTimeout = 1;
+				connectionConfig.PingTimeout = 2000;
+				connectionConfig.DisconnectTimeout = 5000;
+				connectionConfig.PacketSize = (ushort)((messageData.Length * 2) + 32);
 
-				int host = client.AddHost(new HostTopology(connectionConfig, 1), 0, null);
+				HostTopology topology = new HostTopology(connectionConfig, 1);
+
+				topology.SentMessagePoolSize = (ushort)(sendRate / 2);
+				topology.ReceivedMessagePoolSize = (ushort)(sendRate / 2);
+
+				NetLibraryManager client = new NetLibraryManager(globalConfig);
+
+				int host = client.AddHost(topology, 0, null);
 				int connection = client.Connect(host, ip, port, 0, out byte connectionError);
 
 				int reliableToSend = 0;
