@@ -8,13 +8,13 @@ BenchmarkNet is a console application for testing the reliable UDP networking so
 
 Features:
 - Asynchronous simulation of a large number of clients
-- Stable under high loads
+- Stable under high-loads
 - Simple and flexible simulation setup
 - Detailed session information
 
 Supported networking libraries:
 - [ENet](https://github.com/lsalzman/enet "ENet") ([C# Wrapper](https://github.com/NateShoffner/ENetSharp "C# Wrapper"))
-- [UNet](https://docs.unity3d.com/Manual/UNetUsingTransport.html "UNet")
+- [UNet](https://forum.unity.com/threads/standalone-library-binaries-aka-server-dll.526718 "UNet")
 - [LiteNetLib](https://github.com/RevenantX/LiteNetLib "LiteNetLib")
 - [Lidgren](https://github.com/lidgren/lidgren-network-gen3 "Lidgren")
 - [MiniUDP](https://github.com/ashoulson/MiniUDP "MiniUDP")
@@ -47,7 +47,7 @@ If you have any questions, contact me via [email](mailto:nxrighthere@gmail.com "
 
 Donations
 --------
-This project has already had an impact and helped developers in an improvement of networking libraries. If you like this project, you can support me on [PayPal](https://www.paypal.me/nxrighthere)
+This project has already had an impact and helped developers in an improvement of the networking libraries. If you like this project, you can support me on [PayPal](https://www.paypal.me/nxrighthere)
 or [Bountysource](https://salt.bountysource.com/checkout/amount?team=nxrighthere).
 
 Bitcoin `173ZRNuT4k7ss7rAVmNCZr6hLfFY4DZubU` Litecoin `LhdxsS7AUhUrKMmMyTX1yL4EQp6tzSonDT`
