@@ -787,7 +787,7 @@ namespace NX {
 	public sealed class LiteNetLibBenchmark : BenchmarkNet {
 		public static void Server() {
 			EventBasedNetListener listener = new EventBasedNetListener();
-			NetManager server = new NetManager(listener, maxClients);
+			NetManager server = new NetManager(listener);
 
 			server.MergeEnabled = true;
 			server.Start(port);
