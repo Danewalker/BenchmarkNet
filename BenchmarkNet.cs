@@ -29,26 +29,26 @@ using System.Runtime;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
-// ENet (https://github.com/lsalzman/enet) C# Wrapper (https://github.com/NateShoffner/ENetSharp)
+// ENet 1.3.13 (https://github.com/lsalzman/enet) C# Wrapper (https://github.com/NateShoffner/ENetSharp)
 using ENet;
-// UNet (https://docs.unity3d.com/Manual/UNetUsingTransport.html)
+// UNet 1.0.0.9 (https://forum.unity.com/threads/standalone-library-binaries-aka-server-dll.526718)
 using UnetServerDll;
-// LiteNetLib (https://github.com/RevenantX/LiteNetLib)
+// LiteNetLib 0.8 (https://github.com/RevenantX/LiteNetLib)
 using LiteNetLib;
 using LiteNetLib.Utils;
-// Lidgren (https://github.com/lidgren/lidgren-network-gen3)
+// Lidgren 1.7.0 (https://github.com/lidgren/lidgren-network-gen3)
 using Lidgren.Network;
-// MiniUDP (https://github.com/ashoulson/MiniUDP)
+// MiniUDP 0.8.5 (https://github.com/ashoulson/MiniUDP)
 using MiniUDP;
-// Hazel (https://github.com/DarkRiftNetworking/Hazel-Networking)
+// Hazel 0.1.2 (https://github.com/DarkRiftNetworking/Hazel-Networking)
 using Hazel;
 using Hazel.Udp;
-// Photon (https://www.photonengine.com/en/OnPremise)
+// Photon 4.0.29 (https://www.photonengine.com/en/OnPremise)
 using ExitGames.Client.Photon;
-// Neutrino (https://github.com/Claytonious/Neutrino)
+// Neutrino 1.0 (https://github.com/Claytonious/Neutrino)
 using Neutrino.Core;
 using Neutrino.Core.Messages;
-// DarkRift (https://darkriftnetworking.com/DarkRift2)
+// DarkRift 2.1.2 (https://darkriftnetworking.com/DarkRift2)
 using DarkRift;
 using DarkRift.Server;
 using DarkRift.Client;
