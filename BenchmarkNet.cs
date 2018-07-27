@@ -68,25 +68,21 @@ namespace NX {
 		protected static int reliableMessages = 0;
 		protected static int unreliableMessages = 0;
 		// Data
-		protected static string message = String.Empty;
+		protected static string message;
 		protected static char[] reversedMessage;
 		protected static byte[] messageData;
 		protected static byte[] reversedData;
-		// Status
-		protected static bool processActive = false;
-		protected static bool processCompleted = false;
-		protected static bool processOverload = false;
-		protected static bool processFailure = false;
 		// Modes
 		protected static bool instantMode = false;
 		protected static bool lowLatencyMode = false;
 		// Debug
 		protected static bool disableInfo = false;
 		protected static bool disableSupervisor = false;
-		// Passes
-		protected static bool maxClientsPass = true;
-		// Threads
-		protected static Thread serverThread;
+		// Status
+		protected static bool processActive = false;
+		protected static bool processCompleted = false;
+		protected static bool processOverload = false;
+		protected static bool processFailure = false;
 		// Stats
 		protected static volatile int clientsStartedCount = 0;
 		protected static volatile int clientsConnectedCount = 0;
@@ -109,8 +105,10 @@ namespace NX {
 		protected static volatile int clientsUnreliableBytesSent = 0;
 		protected static volatile int clientsUnreliableBytesReceived = 0;
 		// Internals
-		private static ushort maxPeers = 0;
 		private static byte selectedLibrary = 0;
+		private static ushort maxPeers = 0;
+		private static bool maxClientsPass = true;
+		private static Thread serverThread;
 		private static GCLatencyMode initGCLatencyMode;
 		private static readonly string[] networkingLibraries = {
 			"ENet",
