@@ -397,17 +397,27 @@ namespace NX {
 			await Task.Factory.StartNew(() => {
 				decimal currentData = 0;
 				decimal lastData = 0;
+				bool recollectData = true;
 
 				while (processActive) {
 					Thread.Sleep(1000);
 
+					Collect:
 					currentData = ((decimal)serverReliableSent + (decimal)serverReliableReceived + (decimal)serverUnreliableSent + (decimal)serverUnreliableReceived + (decimal)clientsReliableSent + (decimal)clientsReliableReceived + (decimal)clientsUnreliableSent + (decimal)clientsUnreliableReceived);
 
 					if (currentData == lastData) {
-						if (currentData == 0)
+						if (currentData == 0) {
+							if (recollectData) {
+								recollectData = false;
+								Thread.Sleep(4000);
+
+								goto Collect;
+							}
+
 							processFailure = true;
-						else if (clientsDisconnectedCount > 1 || ((currentData / (maxClients * ((decimal)reliableMessages + (decimal)unreliableMessages) * 4)) * 100) < 90)
+						} else if (clientsDisconnectedCount > 1 || ((currentData / (maxClients * ((decimal)reliableMessages + (decimal)unreliableMessages) * 4)) * 100) < 90) {
 							processOverload = true;
+						}
 
 						processCompleted = true;
 						Thread.Sleep(100);
