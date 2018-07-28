@@ -81,8 +81,9 @@ namespace NX {
 		// Status
 		protected static bool processActive = false;
 		protected static bool processCompleted = false;
-		protected static bool processOverload = false;
+		protected static bool processCrashed = false;
 		protected static bool processFailure = false;
+		protected static bool processOverload = false;
 		// Stats
 		protected static volatile int clientsStartedCount = 0;
 		protected static volatile int clientsConnectedCount = 0;
@@ -305,6 +306,7 @@ namespace NX {
 				};
 				string[] status = {
 					"Running" + Space(2),
+					"Crashed" + Space(2),
 					"Failure" + Space(2),
 					"Overload" + Space(1),
 					"Completed"
@@ -349,7 +351,7 @@ namespace NX {
 					}
 
 					info.Clear();
-					info.AppendLine().Append("Server status: ").Append((processFailure || !serverThread.IsAlive ? status[1] : (processOverload ? status[2] : (processCompleted ? status[3] : status[0]))));
+					info.AppendLine().Append("Server status: ").Append(processCrashed ? status[1] : (processFailure ? status[2] : (processOverload ? status[3] : (processCompleted ? status[4] : status[0]))));
 					info.AppendLine().Append("Clients status: ").Append(clientsStartedCount).Append(" started, ").Append(clientsConnectedCount).Append(" connected, ").Append(clientsDisconnectedCount).Append(" dropped");
 					info.AppendLine().Append("Server payload flow: ").Append(PayloadFlow(clientsStreamsCount, messageData.Length, sendRate).ToString("0.00")).Append(" mbps \\ ").Append(PayloadFlow(maxClients * 2, messageData.Length, sendRate).ToString("0.00")).Append(" mbps").Append(space);
 					info.AppendLine().Append("Clients sent -> Reliable: ").Append(clientsReliableSent).Append(" messages (").Append(clientsReliableBytesSent).Append(" bytes), Unreliable: ").Append(clientsUnreliableSent).Append(" messages (").Append(clientsUnreliableBytesSent).Append(" bytes)");
@@ -402,6 +404,9 @@ namespace NX {
 
 					Collect:
 					currentData = ((decimal)serverReliableSent + (decimal)serverReliableReceived + (decimal)serverUnreliableSent + (decimal)serverUnreliableReceived + (decimal)clientsReliableSent + (decimal)clientsReliableReceived + (decimal)clientsUnreliableSent + (decimal)clientsUnreliableReceived);
+
+					if (!serverThread.IsAlive)
+						processCrashed = true;
 
 					if (currentData == lastData) {
 						if (currentData == 0) {
