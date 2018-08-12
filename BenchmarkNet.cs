@@ -68,7 +68,7 @@ namespace NX {
 		protected static int reliableMessages = 0;
 		protected static int unreliableMessages = 0;
 		// Data
-		protected static string message;
+		protected static string message = String.Empty;
 		protected static char[] reversedMessage;
 		protected static byte[] messageData;
 		protected static byte[] reversedData;
