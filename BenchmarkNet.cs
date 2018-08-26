@@ -627,8 +627,8 @@ namespace NX {
 			globalConfig.ThreadAwakeTimeout = (uint)serverTickRate;
 			globalConfig.MaxHosts = 1;
 			globalConfig.MaxPacketSize = (ushort)((messageData.Length * 2) + 32);
-			globalConfig.ReactorMaximumSentMessages = (ushort)((reliableMessages + unreliableMessages) * sendRate);;
-			globalConfig.ReactorMaximumReceivedMessages = (ushort)((reliableMessages + unreliableMessages) * sendRate);;
+			globalConfig.ReactorMaximumSentMessages = (ushort)((reliableMessages + unreliableMessages) * sendRate);
+			globalConfig.ReactorMaximumReceivedMessages = (ushort)((reliableMessages + unreliableMessages) * sendRate);
 
 			ConnectionConfig connectionConfig = new ConnectionConfig();
 
