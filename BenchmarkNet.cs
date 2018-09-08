@@ -366,21 +366,14 @@ namespace NX {
 					if (spinnerTimer >= 10) {
 						spinnerSequence++;
 						spinnerTimer = 0;
+
+						if (spinnerSequence == spinner.Length)
+							spinnerSequence = 0;
 					} else {
 						spinnerTimer++;
 					}
 
-					switch (spinnerSequence % 4) {
-						case 0: Console.WriteLine(spinner[0]);
-							break;
-						case 1: Console.WriteLine(spinner[1]);
-							break;
-						case 2: Console.WriteLine(spinner[2]);
-							break;
-						case 3: Console.WriteLine(spinner[3]);
-							break;
-					}
-
+					Console.WriteLine(spinner[spinnerSequence]);
 					Thread.Sleep(15);
 				}
 
