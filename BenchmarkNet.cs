@@ -324,16 +324,17 @@ namespace NX {
 					spinner[i] = Environment.NewLine + "Press any key to stop the process" + Space(1) + spinner[i];
 				}
 
+				Console.WriteLine(strings[0]);
+				Console.WriteLine(strings[1]);
+				Console.WriteLine(strings[2]);
+				Console.WriteLine(strings[3]);
+
 				StringBuilder info = new StringBuilder(1024);
 				Stopwatch elapsedTime = Stopwatch.StartNew();
 
 				while (processActive) {
 					Console.CursorVisible = false;
-					Console.SetCursorPosition(0, 0);
-					Console.WriteLine(strings[0]);
-					Console.WriteLine(strings[1]);
-					Console.WriteLine(strings[2]);
-					Console.WriteLine(strings[3]);
+					Console.SetCursorPosition(0, 4);
 
 					if (!maxClientsPass || lowLatencyMode)
 						Console.WriteLine();
