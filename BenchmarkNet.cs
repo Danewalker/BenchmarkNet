@@ -265,7 +265,7 @@ namespace NX {
 			processActive = true;
 
 			if (serverInstance || clientsInstance) {
-				if (selectedLibrary == 0)
+				if (selectedLibrary == Array.FindIndex(networkingLibraries, entry => entry.Contains("ENet")))
 					ENet.Library.Initialize();
 			}
 
@@ -301,7 +301,7 @@ namespace NX {
 			}
 
 			Task pulseTask = Pulse();
-			Task dataTask = Data();
+			Task dataTask = serverInstance && selectedLibrary == Array.FindIndex(networkingLibraries, entry => entry.Contains("Photon")) ? null : Data();
 
 			#if !GUI
 				Task infoTask = serverInstance || clientsInstance ? null : Info();
@@ -317,8 +317,8 @@ namespace NX {
 		}
 
 		private static void Deinitialize() {
-			serverProcess.Kill();
-			clientsProcess.Kill();
+			serverProcess.Close();
+			clientsProcess.Close();
 		}
 
 		[STAThread]
@@ -658,7 +658,7 @@ namespace NX {
 				}
 
 				if (serverInstance || clientsInstance) {
-					if (selectedLibrary == 0)
+					if (selectedLibrary == Array.FindIndex(networkingLibraries, entry => entry.Contains("ENet")))
 						ENet.Library.Deinitialize();
 				}
 			}, TaskCreationOptions.LongRunning);
