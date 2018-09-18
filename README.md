@@ -11,9 +11,10 @@ Features:
 - Stable under high-loads
 - Simple and flexible simulation setup
 - Detailed session information
+- Multi-process instances
 
 Supported networking libraries:
-- [ENet](https://github.com/lsalzman/enet "ENet") ([C# Wrapper](https://github.com/NateShoffner/ENetSharp "C# Wrapper"))
+- [ENet](https://github.com/nxrighthere/ENet-CSharp "ENet")
 - [UNet](https://forum.unity.com/threads/standalone-library-binaries-aka-server-dll.526718 "UNet")
 - [LiteNetLib](https://github.com/RevenantX/LiteNetLib "LiteNetLib")
 - [Lidgren](https://github.com/lidgren/lidgren-network-gen3 "Lidgren")
@@ -31,7 +32,7 @@ Each simulated client is one asynchronous task for establishing a connection wit
 
 Usage
 --------
-Run the application and enter the desired parameters to override the default values. Do not perform any actions while the benchmark is running and wait until the process is complete.
+Run the application, select the networking library and set the number of simulated clients to override the default value. Do not perform any actions while the benchmark is running and wait until the process is complete.
 
 When you are going to perform a test with less than 256 simulated clients, it's highly recommended to switch [GC mode](https://github.com/nxrighthere/BenchmarkNet/wiki/Advanced-Options#gc-mode) from Server GC to Workstation GC. You can find more information in [this article](https://blogs.msdn.microsoft.com/seteplia/2017/01/05/understanding-different-gc-modes-with-concurrency-visualizer/) about how different GC modes are working.
 
