@@ -317,8 +317,11 @@ namespace NX {
 		}
 
 		private static void Deinitialize() {
-			serverProcess.Close();
-			clientsProcess.Close();
+			if (!serverProcess.HasExited)
+				serverProcess.Kill();
+
+			if (!clientsProcess.HasExited)
+				clientsProcess.Kill();
 		}
 
 		[STAThread]
