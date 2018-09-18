@@ -82,10 +82,6 @@ namespace NX {
 		public static bool processOverload = false;
 		public static bool processUninitialized = true;
 		// Stats
-		public static volatile int clientsStartedCount = 0;
-		public static volatile int clientsConnectedCount = 0;
-		public static volatile int clientsStreamsCount = 0;
-		public static volatile int clientsDisconnectedCount = 0;
 		public static volatile int serverReliableSent = 0;
 		public static volatile int serverReliableReceived = 0;
 		public static volatile int serverReliableBytesSent = 0;
@@ -94,6 +90,10 @@ namespace NX {
 		public static volatile int serverUnreliableReceived = 0;
 		public static volatile int serverUnreliableBytesSent = 0;
 		public static volatile int serverUnreliableBytesReceived = 0;
+		public static volatile int clientsStartedCount = 0;
+		public static volatile int clientsConnectedCount = 0;
+		public static volatile int clientsStreamsCount = 0;
+		public static volatile int clientsDisconnectedCount = 0;
 		public static volatile int clientsReliableSent = 0;
 		public static volatile int clientsReliableReceived = 0;
 		public static volatile int clientsReliableBytesSent = 0;
@@ -442,7 +442,6 @@ namespace NX {
 
 				while (processActive) {
 					if (serverInstance) {
-						serverMessage.uninitialized = processUninitialized;
 						serverMessage.uninitialized = processUninitialized;
 						serverMessage.reliableSent = serverReliableSent;
 						serverMessage.reliableReceived = serverReliableReceived;
@@ -1563,19 +1562,10 @@ namespace NX {
 			public void OnMessage(object message) {
 				byte[] data = (byte[])message;
 
-				if (data[0] == messageData[0]) {
-					Interlocked.Increment(ref serverReliableReceived);
-					Interlocked.Add(ref serverReliableBytesReceived, data.Length);
-					Interlocked.Increment(ref serverReliableSent);
-					Interlocked.Add(ref serverReliableBytesSent, data.Length);
+				if (data[0] == messageData[0])
 					OnReliableReceived(data);
-				} else if (data[0] == reversedData[0]) {
-					Interlocked.Increment(ref serverUnreliableReceived);
-					Interlocked.Add(ref serverUnreliableBytesReceived, data.Length);
-					Interlocked.Increment(ref serverUnreliableSent);
-					Interlocked.Add(ref serverUnreliableBytesSent, data.Length);
+				else if (data[0] == reversedData[0])
 					OnUnreliableReceived(data);
-				}
 			}
 
 			public void OnStatusChanged(StatusCode statusCode) {
@@ -1606,7 +1596,7 @@ namespace NX {
 			server.Connect(ip + ":" + port, title);
 
 			listener.OnConnected += () => {
-				Environment.Exit(0);
+				Thread.Sleep(Timeout.Infinite);
 			};
 
 			listener.OnDisconnected += () => {
@@ -1765,6 +1755,8 @@ namespace NX {
 		public static async Task Client() {
 			await Task.Factory.StartNew(() => {
 				Node client = new Node(Task.CurrentId.ToString(), ip, port, typeof(NeutrinoBenchmark).Assembly);
+
+				NeutrinoConfig.PeerTimeoutMillis = ((Math.Max(reliableMessages, unreliableMessages) / sendRate) * 2) * 1000;
 
 				int reliableToSend = 0;
 				int unreliableToSend = 0;
