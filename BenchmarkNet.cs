@@ -115,28 +115,26 @@ namespace NX {
 			"DarkRift"
 		};
 		// Data
-		protected static char[] reversedMessage;
 		protected static byte[] messageData;
 		protected static byte[] reversedData;
+		protected static char[] reversedMessage;
 		// Internals
 		private static bool serverInstance = false;
 		private static bool clientsInstance = false;
 		private static bool maxClientsPass = true;
 		private static bool sustainedLowLatency = false;
 		private static ushort maxPeers = 0;
-		private static int memoryLength = 512;
 		private static BinaryFormatter binaryFormatter;
 		private static Thread serverThread;
 		private static ServerMessage serverMessage;
 		private static ClientsMessage clientsMessage;
-		private static MemoryMappedFile serverData;
-		private static MemoryMappedFile clientsData;
 		private static MemoryMappedViewStream serverStream;
 		private static MemoryMappedViewStream clientsStream;
-		private static NamedPipeServerStream masterPipeServer;
-		private static NamedPipeServerStream masterPipeClients;
+		private static NamedPipeServerStream serverPipe;
+		private static NamedPipeServerStream clientsPipe;
 		private static Process serverProcess;
 		private static Process clientsProcess;
+		private const int memoryMappedLength = 512;
 		private	const ushort defaultPort = 9500;
 		private	const ushort defaultMaxClients = 1000;
 		private const int defaultServerTickRate = 64;
@@ -147,7 +145,7 @@ namespace NX {
 		private	const string defaultMessage = "Sometimes we just need a good networking library";
 		// Functions
 		#if !GUI
-			private static readonly Func<int, string> Space = (value) => (String.Empty.PadRight(value));
+			private static readonly Func<int, string> Space = (value) => String.Empty.PadRight(value);
 			private static readonly Func<int, decimal, decimal, decimal> PayloadThroughput = (clientsStreamsCount, messageLength, sendRate) => (clientsStreamsCount * (messageLength * sendRate * 2) * 8 / (1000 * 1000)) * 2;
 		#else
 			
@@ -185,13 +183,15 @@ namespace NX {
 		public static bool Initialize() {
 			binaryFormatter = new BinaryFormatter();
 
-			serverData = MemoryMappedFile.CreateOrOpen(title + "ServerData", memoryLength, MemoryMappedFileAccess.ReadWrite);
-			serverStream = serverData.CreateViewStream(0, memoryLength);
+			MemoryMappedFile serverData = MemoryMappedFile.CreateOrOpen(title + "ServerData", memoryMappedLength, MemoryMappedFileAccess.ReadWrite);
+
+			serverStream = serverData.CreateViewStream(0, memoryMappedLength);
 			binaryFormatter.Serialize(serverStream, serverMessage);
 			serverStream.Seek(0, SeekOrigin.Begin);
 
-			clientsData = MemoryMappedFile.CreateOrOpen(title + "ClientsData", memoryLength, MemoryMappedFileAccess.ReadWrite);
-			clientsStream = clientsData.CreateViewStream(0, memoryLength);
+			MemoryMappedFile clientsData = MemoryMappedFile.CreateOrOpen(title + "ClientsData", memoryMappedLength, MemoryMappedFileAccess.ReadWrite);
+
+			clientsStream = clientsData.CreateViewStream(0, memoryMappedLength);
 			binaryFormatter.Serialize(clientsStream, clientsMessage);
 			clientsStream.Seek(0, SeekOrigin.Begin);
 
@@ -317,6 +317,8 @@ namespace NX {
 		}
 
 		private static void Deinitialize() {
+			processActive = false;
+
 			if (!serverProcess.HasExited)
 				serverProcess.Kill();
 
@@ -389,16 +391,11 @@ namespace NX {
 				if (!Initialize()) {
 					Console.ForegroundColor = ConsoleColor.Red;
 					Console.WriteLine("Initialization failed!");
-					Console.ReadKey();
-					processActive = false;
-					Environment.Exit(0);
 				}
 
 				Console.ReadKey();
 			#endif
 
-			processActive = false;
-			
 			Deinitialize();
 
 			Environment.Exit(0);
@@ -410,26 +407,26 @@ namespace NX {
 				const string clientsPipeName = title + "Clients";
 
 				if (serverInstance) {
-					NamedPipeClientStream serverPipe = new NamedPipeClientStream(".", serverPipeName, PipeDirection.In);
+					NamedPipeClientStream serverPipeStream = new NamedPipeClientStream(".", serverPipeName, PipeDirection.In);
 
-					serverPipe.Connect();
-					serverPipe.BeginRead(new byte[1], 0, 1, (result) => { Environment.Exit(0); }, serverPipe);
+					serverPipeStream.Connect();
+					serverPipeStream.BeginRead(new byte[1], 0, 1, (result) => Environment.Exit(0), serverPipeStream);
 				} else if (clientsInstance) {
-					NamedPipeClientStream clientsPipe = new NamedPipeClientStream(".", clientsPipeName, PipeDirection.In);
+					NamedPipeClientStream clientsPipeStream = new NamedPipeClientStream(".", clientsPipeName, PipeDirection.In);
 
-					clientsPipe.Connect();
-					clientsPipe.BeginRead(new byte[1], 0, 1, (result) => { Environment.Exit(0); }, clientsPipe);
+					clientsPipeStream.Connect();
+					clientsPipeStream.BeginRead(new byte[1], 0, 1, (result) => Environment.Exit(0), clientsPipeStream);
 				} else {
 					Task.Run(async() => {
-						masterPipeServer = new NamedPipeServerStream(serverPipeName, PipeDirection.Out);
+						serverPipe = new NamedPipeServerStream(serverPipeName, PipeDirection.Out);
 
-						await masterPipeServer.WaitForConnectionAsync();
+						await serverPipe.WaitForConnectionAsync();
 					});
 
 					Task.Run(async() => {
-						masterPipeClients = new NamedPipeServerStream(clientsPipeName, PipeDirection.Out);
+						clientsPipe = new NamedPipeServerStream(clientsPipeName, PipeDirection.Out);
 
-						await masterPipeClients.WaitForConnectionAsync();
+						await clientsPipe.WaitForConnectionAsync();
 					});
 				}
 			}, TaskCreationOptions.LongRunning);
@@ -437,11 +434,8 @@ namespace NX {
 
 		private static async Task Data() {
 			await Task.Factory.StartNew(() => {
-				byte[] serverBuffer = serverInstance || clientsInstance ? null : new byte[memoryLength];
-				byte[] clientsBuffer = serverInstance || clientsInstance ? null : new byte[memoryLength];
-
-				serverMessage = default(ServerMessage);
-				clientsMessage = default(ClientsMessage);
+				byte[] serverBuffer = serverInstance || clientsInstance ? null : new byte[memoryMappedLength];
+				byte[] clientsBuffer = serverInstance || clientsInstance ? null : new byte[memoryMappedLength];
 
 				while (processActive) {
 					if (serverInstance) {
@@ -474,8 +468,8 @@ namespace NX {
 						binaryFormatter.Serialize(clientsStream, clientsMessage);
 						clientsStream.Seek(0, SeekOrigin.Begin);
 					} else {
-						serverStream.Read(serverBuffer, 0, memoryLength);
-						clientsStream.Read(clientsBuffer, 0, memoryLength);
+						serverStream.Read(serverBuffer, 0, memoryMappedLength);
+						clientsStream.Read(clientsBuffer, 0, memoryMappedLength);
 
 						using (MemoryStream stream = new MemoryStream(serverBuffer)) {
 							serverMessage = (ServerMessage)binaryFormatter.Deserialize(stream);
@@ -650,7 +644,6 @@ namespace NX {
 
 						processCompleted = true;
 						Thread.Sleep(100);
-						processActive = false;
 
 						Deinitialize();						
 
@@ -1040,9 +1033,7 @@ namespace NX {
 			server.MergeEnabled = true;
 			server.Start(port);
 
-			listener.ConnectionRequestEvent += (request) => {
-				request.AcceptIfKey(title + "Key");
-			};
+			listener.ConnectionRequestEvent += (request) => request.AcceptIfKey(title + "Key");
 
 			listener.NetworkReceiveEvent += (peer, reader, deliveryMethod) => {
 				if (deliveryMethod == DeliveryMethod.ReliableOrdered) {
@@ -1179,6 +1170,7 @@ namespace NX {
 			config.MaximumConnections = maxClients;
 
 			NetServer server = new NetServer(config);
+
 			server.Start();
 
 			NetIncomingMessage netMessage;
@@ -1598,13 +1590,8 @@ namespace NX {
 
 			server.Connect(ip + ":" + port, title);
 
-			listener.OnConnected += () => {
-				Thread.Sleep(Timeout.Infinite);
-			};
-
-			listener.OnDisconnected += () => {
-				processFailure = true;
-			};
+			listener.OnConnected += () => Thread.Sleep(Timeout.Infinite);
+			listener.OnDisconnected += () => processFailure = true;
 
 			while (processActive) {
 				server.Service();
