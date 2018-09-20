@@ -1606,6 +1606,7 @@ namespace NX {
 				PhotonPeerListener listener = new PhotonPeerListener();
 				PhotonPeer client = new PhotonPeer(listener, ConnectionProtocol.Udp);
 
+				client.ChannelCount = 4;
 				client.Connect(ip + ":" + port, title);
 
 				int reliableToSend = 0;
@@ -1619,7 +1620,7 @@ namespace NX {
 
 					while (processActive) {
 						if (reliableToSend > 0) {
-							client.SendMessage(messageData, true, 0, false);
+							client.SendMessage(messageData, true, 2, false);
 							Interlocked.Decrement(ref reliableToSend);
 							Interlocked.Increment(ref reliableSentCount);
 							Interlocked.Increment(ref clientsReliableSent);
@@ -1627,7 +1628,7 @@ namespace NX {
 						}
 
 						if (unreliableToSend > 0) {
-							client.SendMessage(reversedData, false, 1, false);
+							client.SendMessage(reversedData, false, 3, false);
 							Interlocked.Decrement(ref unreliableToSend);
 							Interlocked.Increment(ref unreliableSentCount);
 							Interlocked.Increment(ref clientsUnreliableSent);
