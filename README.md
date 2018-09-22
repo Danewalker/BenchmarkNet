@@ -46,6 +46,8 @@ Feel free to join the discussion in the [thread](https://forum.unity.com/threads
 
 If you have any questions, contact me via [email](mailto:nxrighthere@gmail.com "email").
 
+Please, check [this](https://github.com/nxrighthere/BenchmarkNet/issues?q=is%3Aissue+is%3Aclosed) section before opening a new issue.
+
 Donations
 --------
 This project has already had an impact and helped developers in an improvement of the networking libraries. If you like this project, you can support me on [PayPal](https://www.paypal.me/nxrighthere)
