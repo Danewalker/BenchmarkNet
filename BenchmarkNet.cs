@@ -125,7 +125,6 @@ namespace NX {
 		private static bool sustainedLowLatency = false;
 		private static ushort maxPeers = 0;
 		private static BinaryFormatter binaryFormatter;
-		private static Thread serverThread;
 		private static ServerMessage serverMessage;
 		private static ClientsMessage clientsMessage;
 		private static MemoryMappedViewStream serverStream;
@@ -134,6 +133,7 @@ namespace NX {
 		private static NamedPipeServerStream clientsPipe;
 		private static Process serverProcess;
 		private static Process clientsProcess;
+		private static Thread serverThread;
 		private const int memoryMappedLength = 512;
 		private	const ushort defaultPort = 9500;
 		private	const ushort defaultMaxClients = 1000;
