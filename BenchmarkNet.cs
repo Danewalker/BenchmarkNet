@@ -75,12 +75,12 @@ namespace NX {
 		public static int unreliableMessages = 0;
 		public static string message = String.Empty;
 		// Status
-		public static bool processActive = false;
-		public static bool processCompleted = false;
-		public static bool processCrashed = false;
-		public static bool processFailure = false;
-		public static bool processOverload = false;
-		public static bool processUninitialized = true;
+		public static volatile bool processActive = false;
+		public static volatile bool processCompleted = false;
+		public static volatile bool processCrashed = false;
+		public static volatile bool processFailure = false;
+		public static volatile bool processOverload = false;
+		public static volatile bool processUninitialized = true;
 		// Stats
 		public static volatile int serverReliableSent = 0;
 		public static volatile int serverReliableReceived = 0;
@@ -410,12 +410,12 @@ namespace NX {
 					NamedPipeClientStream serverPipeStream = new NamedPipeClientStream(".", serverPipeName, PipeDirection.In);
 
 					serverPipeStream.Connect();
-					serverPipeStream.BeginRead(new byte[1], 0, 1, (result) => Environment.Exit(0), serverPipeStream);
+					serverPipeStream.BeginRead(new byte[1], 0, 1, (result) => Process.GetCurrentProcess().Kill(), serverPipeStream);
 				} else if (clientsInstance) {
 					NamedPipeClientStream clientsPipeStream = new NamedPipeClientStream(".", clientsPipeName, PipeDirection.In);
 
 					clientsPipeStream.Connect();
-					clientsPipeStream.BeginRead(new byte[1], 0, 1, (result) => Environment.Exit(0), clientsPipeStream);
+					clientsPipeStream.BeginRead(new byte[1], 0, 1, (result) => Process.GetCurrentProcess().Kill(), clientsPipeStream);
 				} else {
 					Task.Run(async() => {
 						serverPipe = new NamedPipeServerStream(serverPipeName, PipeDirection.Out);
