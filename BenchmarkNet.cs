@@ -187,13 +187,13 @@ namespace NX {
 
 			serverStream = serverData.CreateViewStream(0, memoryMappedLength);
 			binaryFormatter.Serialize(serverStream, serverMessage);
-			serverStream.Seek(0, SeekOrigin.Begin);
+			serverStream.Position = 0;
 
 			MemoryMappedFile clientsData = MemoryMappedFile.CreateOrOpen(title + "ClientsData", memoryMappedLength, MemoryMappedFileAccess.ReadWrite);
 
 			clientsStream = clientsData.CreateViewStream(0, memoryMappedLength);
 			binaryFormatter.Serialize(clientsStream, clientsMessage);
-			clientsStream.Seek(0, SeekOrigin.Begin);
+			clientsStream.Position = 0;
 
 			if (serverInstance) {
 				if (selectedLibrary == 0)
@@ -453,7 +453,7 @@ namespace NX {
 						serverMessage.unreliableBytesReceived = serverUnreliableBytesReceived;
 
 						binaryFormatter.Serialize(serverStream, serverMessage);
-						serverStream.Seek(0, SeekOrigin.Begin);
+						serverStream.Position = 0;
 					} else if (clientsInstance) {
 						clientsMessage.StartedCount = clientsStartedCount;
 						clientsMessage.ConnectedCount = clientsConnectedCount;
@@ -469,7 +469,7 @@ namespace NX {
 						clientsMessage.UnreliableBytesReceived = clientsUnreliableBytesReceived;
 
 						binaryFormatter.Serialize(clientsStream, clientsMessage);
-						clientsStream.Seek(0, SeekOrigin.Begin);
+						clientsStream.Position = 0;
 					} else {
 						serverStream.Read(serverBuffer, 0, memoryMappedLength);
 						clientsStream.Read(clientsBuffer, 0, memoryMappedLength);
@@ -484,7 +484,7 @@ namespace NX {
 						serverUnreliableReceived = serverMessage.unreliableReceived;
 						serverUnreliableBytesSent = serverMessage.unreliableBytesSent;
 						serverUnreliableBytesReceived = serverMessage.unreliableBytesReceived;
-						serverMemory.Seek(0, SeekOrigin.Begin);
+						serverMemory.Position = 0;
 
 						clientsMessage = (ClientsMessage)binaryFormatter.Deserialize(clientsMemory);
 						clientsStartedCount = clientsMessage.StartedCount;
@@ -499,10 +499,10 @@ namespace NX {
 						clientsUnreliableReceived = clientsMessage.UnreliableReceived;
 						clientsUnreliableBytesSent = clientsMessage.UnreliableBytesSent;
 						clientsUnreliableBytesReceived = clientsMessage.UnreliableBytesReceived;
-						clientsMemory.Seek(0, SeekOrigin.Begin);
+						clientsMemory.Position = 0;
 
-						serverStream.Seek(0, SeekOrigin.Begin);
-						clientsStream.Seek(0, SeekOrigin.Begin);
+						serverStream.Position = 0;
+						clientsStream.Position = 0;
 					}
 
 					Thread.Sleep(15);
