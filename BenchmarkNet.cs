@@ -374,18 +374,18 @@ namespace NX {
 					Console.Write(Environment.NewLine + "Enter the number (default 0): ");
 					Byte.TryParse(Console.ReadLine(), out selectedLibrary);
 
-					Console.Write("Simulated clients (default " + defaultMaxClients + "): ");
-					UInt16.TryParse(Console.ReadLine(), out maxClients);
-
 					if (selectedLibrary >= networkingLibraries.Length) {
 						Console.ForegroundColor = ConsoleColor.Red;
 						Console.WriteLine("Please, enter a valid number of the networking library!");
-						Console.ReadKey();
 						Console.ResetColor();
+						Console.ReadKey();
 						Console.Clear();
 
 						goto Start;
 					}
+
+					Console.Write("Simulated clients (default " + defaultMaxClients + "): ");
+					UInt16.TryParse(Console.ReadLine(), out maxClients);
 				}
 
 				if (!Initialize()) {
