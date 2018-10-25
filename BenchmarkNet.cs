@@ -146,7 +146,7 @@ namespace NX {
 		// Functions
 		#if !GUI
 			private static readonly Func<int, string> Space = (value) => String.Empty.PadRight(value);
-			private static readonly Func<int, decimal, decimal, decimal> PayloadThroughput = (clientsStreamsCount, messageLength, sendRate) => (clientsStreamsCount * (messageLength * sendRate * 2) * 8 / (1000 * 1000)) * 2;
+			private static readonly Func<int, decimal, decimal, decimal> PayloadThroughput = (clientsStreamsCount, messageLength, sendRate) => (clientsStreamsCount * (messageLength * sendRate * 2) * 8 / (1000 * 1000));
 		#else
 			
 		#endif
