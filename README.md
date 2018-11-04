@@ -30,6 +30,16 @@ How it works?
 --------
 Each simulated client is one asynchronous task for establishing a connection with the server and processing network events. Each task has one subtask which also works asynchronously to send network messages at a specified interval (15 messages per second by default). So, 1000 simulated clients is 1000 tasks with 1000 subtasks which work independently of each other. This sounds scary, but CPU usage is <1% for tasks itself and every operation is completely thread-safe. The clients send network messages to the server (500 reliable and 1000 unreliable by default). The server also sends messages to the clients in response (48 bytes per message by default). The application will monitor how the data is processed by the server and clients, and report their status in real-time.
 
+Quality control
+--------
+The application helps to determine many various problems:
+- Memory leaks
+- Deadlocks
+- Buffers exhaustion
+- Connections disruption
+- GC pressure
+- Bugs
+
 Usage
 --------
 Before launching the application set the desired parameters in the [config file](https://github.com/nxrighthere/BenchmarkNet/wiki/Advanced-Options) to override the default values. Run the application, select the networking library and set any number of simulated clients. Do not perform any actions while the benchmark is running and wait until the process is complete.
