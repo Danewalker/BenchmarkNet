@@ -166,18 +166,18 @@ namespace NX {
 
 		[Serializable]
 		private struct ClientsMessage {
-			public int StartedCount;
-			public int ConnectedCount;
-			public int StreamsCount;
-			public int DisconnectedCount;
-			public int ReliableSent;
-			public int ReliableReceived;
-			public int ReliableBytesSent;
-			public int ReliableBytesReceived;
-			public int UnreliableSent;
-			public int UnreliableReceived;
-			public int UnreliableBytesSent;
-			public int UnreliableBytesReceived;
+			public int startedCount;
+			public int connectedCount;
+			public int streamsCount;
+			public int disconnectedCount;
+			public int reliableSent;
+			public int reliableReceived;
+			public int reliableBytesSent;
+			public int reliableBytesReceived;
+			public int unreliableSent;
+			public int unreliableReceived;
+			public int unreliableBytesSent;
+			public int unreliableBytesReceived;
 		}
 
 		public static bool Initialize() {
@@ -455,18 +455,18 @@ namespace NX {
 						binaryFormatter.Serialize(serverStream, serverMessage);
 						serverStream.Position = 0;
 					} else if (clientsInstance) {
-						clientsMessage.StartedCount = clientsStartedCount;
-						clientsMessage.ConnectedCount = clientsConnectedCount;
-						clientsMessage.StreamsCount = clientsStreamsCount;
-						clientsMessage.DisconnectedCount = clientsDisconnectedCount;
-						clientsMessage.ReliableSent = clientsReliableSent;
-						clientsMessage.ReliableReceived = clientsReliableReceived;
-						clientsMessage.ReliableBytesSent = clientsReliableBytesSent;
-						clientsMessage.ReliableBytesReceived = clientsReliableBytesReceived;
-						clientsMessage.UnreliableSent = clientsUnreliableSent;
-						clientsMessage.UnreliableReceived = clientsUnreliableReceived;
-						clientsMessage.UnreliableBytesSent = clientsUnreliableBytesSent;
-						clientsMessage.UnreliableBytesReceived = clientsUnreliableBytesReceived;
+						clientsMessage.startedCount = clientsStartedCount;
+						clientsMessage.connectedCount = clientsConnectedCount;
+						clientsMessage.streamsCount = clientsStreamsCount;
+						clientsMessage.disconnectedCount = clientsDisconnectedCount;
+						clientsMessage.reliableSent = clientsReliableSent;
+						clientsMessage.reliableReceived = clientsReliableReceived;
+						clientsMessage.reliableBytesSent = clientsReliableBytesSent;
+						clientsMessage.reliableBytesReceived = clientsReliableBytesReceived;
+						clientsMessage.unreliableSent = clientsUnreliableSent;
+						clientsMessage.unreliableReceived = clientsUnreliableReceived;
+						clientsMessage.unreliableBytesSent = clientsUnreliableBytesSent;
+						clientsMessage.unreliableBytesReceived = clientsUnreliableBytesReceived;
 
 						binaryFormatter.Serialize(clientsStream, clientsMessage);
 						clientsStream.Position = 0;
@@ -487,18 +487,18 @@ namespace NX {
 						serverMemory.Position = 0;
 
 						clientsMessage = (ClientsMessage)binaryFormatter.Deserialize(clientsMemory);
-						clientsStartedCount = clientsMessage.StartedCount;
-						clientsConnectedCount = clientsMessage.ConnectedCount;
-						clientsStreamsCount = clientsMessage.StreamsCount;
-						clientsDisconnectedCount = clientsMessage.DisconnectedCount;
-						clientsReliableSent = clientsMessage.ReliableSent;
-						clientsReliableReceived = clientsMessage.ReliableReceived;
-						clientsReliableBytesSent = clientsMessage.ReliableBytesSent;
-						clientsReliableBytesReceived = clientsMessage.ReliableBytesReceived;
-						clientsUnreliableSent = clientsMessage.UnreliableSent;
-						clientsUnreliableReceived = clientsMessage.UnreliableReceived;
-						clientsUnreliableBytesSent = clientsMessage.UnreliableBytesSent;
-						clientsUnreliableBytesReceived = clientsMessage.UnreliableBytesReceived;
+						clientsStartedCount = clientsMessage.startedCount;
+						clientsConnectedCount = clientsMessage.connectedCount;
+						clientsStreamsCount = clientsMessage.streamsCount;
+						clientsDisconnectedCount = clientsMessage.disconnectedCount;
+						clientsReliableSent = clientsMessage.reliableSent;
+						clientsReliableReceived = clientsMessage.reliableReceived;
+						clientsReliableBytesSent = clientsMessage.reliableBytesSent;
+						clientsReliableBytesReceived = clientsMessage.reliableBytesReceived;
+						clientsUnreliableSent = clientsMessage.unreliableSent;
+						clientsUnreliableReceived = clientsMessage.unreliableReceived;
+						clientsUnreliableBytesSent = clientsMessage.unreliableBytesSent;
+						clientsUnreliableBytesReceived = clientsMessage.unreliableBytesReceived;
 						clientsMemory.Position = 0;
 
 						serverStream.Position = 0;
