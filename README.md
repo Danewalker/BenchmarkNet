@@ -2,7 +2,7 @@
   <img src="https://i.imgur.com/PoXC5AA.png" alt="alt logo">
 </p>
 
-[![GitHub release](https://img.shields.io/github/release/nxrighthere/BenchmarkNet.svg)](https://github.com/nxrighthere/BenchmarkNet/releases) [![PayPal](https://drive.google.com/uc?id=1OQrtNBVJehNVxgPf6T6yX1wIysz1ElLR)](https://www.paypal.me/nxrighthere) [![Bountysource](https://drive.google.com/uc?id=19QRobscL8Ir2RL489IbVjcw3fULfWS_Q)](https://salt.bountysource.com/checkout/amount?team=nxrighthere) [![Discord](https://discordapp.com/api/guilds/515987760281288707/embed.png)](https://discord.gg/ceaWXVw)
+[![GitHub release](https://img.shields.io/github/release/nxrighthere/BenchmarkNet.svg)](https://github.com/nxrighthere/BenchmarkNet/releases) [![PayPal](https://drive.google.com/uc?id=1OQrtNBVJehNVxgPf6T6yX1wIysz1ElLR)](https://www.paypal.me/nxrighthere) [![Bountysource](https://drive.google.com/uc?id=19QRobscL8Ir2RL489IbVjcw3fULfWS_Q)](https://salt.bountysource.com/checkout/amount?team=nxrighthere) [![Coinbase](https://drive.google.com/uc?id=1LckuF-IAod6xmO9yF-jhTjq1m-4f7cgF)](https://commerce.coinbase.com/checkout/03e11816-b6fc-4e14-b974-29a1d0886697) [![Discord](https://discordapp.com/api/guilds/515987760281288707/embed.png)](https://discord.gg/ceaWXVw)
 
 BenchmarkNet is a console application for testing the reliable UDP networking solutions.
 
@@ -60,10 +60,7 @@ Please, check [this](https://github.com/nxrighthere/BenchmarkNet/issues?q=is%3Ai
 
 Donations
 --------
-This project has already had an impact and helped developers in an improvement of the networking libraries. If you like this project, you can support me on [PayPal](https://www.paypal.me/nxrighthere)
-or [Bountysource](https://salt.bountysource.com/checkout/amount?team=nxrighthere).
-
-Bitcoin `173ZRNuT4k7ss7rAVmNCZr6hLfFY4DZubU` Litecoin `LhdxsS7AUhUrKMmMyTX1yL4EQp6tzSonDT`
+This project has already had an impact and helped developers in an improvement of the networking libraries. If you like this project, you can support me on [PayPal](https://www.paypal.me/nxrighthere), [Bountysource](https://salt.bountysource.com/checkout/amount?team=nxrighthere) or [Coinbase](https://commerce.coinbase.com/checkout/03e11816-b6fc-4e14-b974-29a1d0886697).
 
 Any support is much appreciated.
 
