@@ -66,6 +66,7 @@ Any support is much appreciated.
 
 Supporters
 --------
+These wonderful people make open-source better:
 <p align="left"> 
   <img src="https://drive.google.com/uc?id=1jVxLviw_CHnjygdfSIdGzLQS2DBdYsa8" alt="supporters">
 </p>
