@@ -762,8 +762,6 @@ namespace NX {
 
 					int reliableToSend = 0;
 					int unreliableToSend = 0;
-					int reliableSentCount = 0;
-					int unreliableSentCount = 0;
 
 					Task.Factory.StartNew(async() => {
 						bool reliableIncremented = false;
@@ -773,7 +771,6 @@ namespace NX {
 							if (reliableToSend > 0) {
 								SendReliable(messageData, 2, peer);
 								Interlocked.Decrement(ref reliableToSend);
-								Interlocked.Increment(ref reliableSentCount);
 								Interlocked.Increment(ref clientsReliableSent);
 								Interlocked.Add(ref clientsReliableBytesSent, messageData.Length);
 							}
@@ -781,7 +778,6 @@ namespace NX {
 							if (unreliableToSend > 0) {
 								SendUnreliable(reversedData, 3, peer);
 								Interlocked.Decrement(ref unreliableToSend);
-								Interlocked.Increment(ref unreliableSentCount);
 								Interlocked.Increment(ref clientsUnreliableSent);
 								Interlocked.Add(ref clientsUnreliableBytesSent, reversedData.Length);
 							}
@@ -941,8 +937,6 @@ namespace NX {
 
 				int reliableToSend = 0;
 				int unreliableToSend = 0;
-				int reliableSentCount = 0;
-				int unreliableSentCount = 0;
 
 				Task.Factory.StartNew(async() => {
 					bool reliableIncremented = false;
@@ -952,7 +946,6 @@ namespace NX {
 						if (reliableToSend > 0) {
 							client.Send(host, connection, reliableChannel, messageData, messageData.Length, out byte sendError);
 							Interlocked.Decrement(ref reliableToSend);
-							Interlocked.Increment(ref reliableSentCount);
 							Interlocked.Increment(ref clientsReliableSent);
 							Interlocked.Add(ref clientsReliableBytesSent, messageData.Length);
 						}
@@ -960,7 +953,6 @@ namespace NX {
 						if (unreliableToSend > 0) {
 							client.Send(host, connection, unreliableChannel, reversedData, reversedData.Length, out byte sendError);
 							Interlocked.Decrement(ref unreliableToSend);
-							Interlocked.Increment(ref unreliableSentCount);
 							Interlocked.Increment(ref clientsUnreliableSent);
 							Interlocked.Add(ref clientsUnreliableBytesSent, reversedData.Length);
 						}
@@ -1075,8 +1067,6 @@ namespace NX {
 
 				int reliableToSend = 0;
 				int unreliableToSend = 0;
-				int reliableSentCount = 0;
-				int unreliableSentCount = 0;
 
 				Task.Factory.StartNew(async() => {
 					bool reliableIncremented = false;
@@ -1086,7 +1076,6 @@ namespace NX {
 						if (reliableToSend > 0) {
 							connection.Send(messageData, DeliveryMethod.ReliableOrdered);
 							Interlocked.Decrement(ref reliableToSend);
-							Interlocked.Increment(ref reliableSentCount);
 							Interlocked.Increment(ref clientsReliableSent);
 							Interlocked.Add(ref clientsReliableBytesSent, messageData.Length);
 						}
@@ -1094,7 +1083,6 @@ namespace NX {
 						if (unreliableToSend > 0) {
 							connection.Send(reversedData, DeliveryMethod.Sequenced);
 							Interlocked.Decrement(ref unreliableToSend);
-							Interlocked.Increment(ref unreliableSentCount);
 							Interlocked.Increment(ref clientsUnreliableSent);
 							Interlocked.Add(ref clientsUnreliableBytesSent, reversedData.Length);
 						}
@@ -1216,8 +1204,6 @@ namespace NX {
 
 				int reliableToSend = 0;
 				int unreliableToSend = 0;
-				int reliableSentCount = 0;
-				int unreliableSentCount = 0;
 
 				Task.Factory.StartNew(async() => {
 					bool reliableIncremented = false;
@@ -1227,7 +1213,6 @@ namespace NX {
 						if (reliableToSend > 0) {
 							SendReliable(messageData, client.ServerConnection, client.CreateMessage(), 2);
 							Interlocked.Decrement(ref reliableToSend);
-							Interlocked.Increment(ref reliableSentCount);
 							Interlocked.Increment(ref clientsReliableSent);
 							Interlocked.Add(ref clientsReliableBytesSent, messageData.Length);
 						}
@@ -1235,7 +1220,6 @@ namespace NX {
 						if (unreliableToSend > 0) {
 							SendUnreliable(reversedData, client.ServerConnection, client.CreateMessage(), 3);
 							Interlocked.Decrement(ref unreliableToSend);
-							Interlocked.Increment(ref unreliableSentCount);
 							Interlocked.Increment(ref clientsUnreliableSent);
 							Interlocked.Add(ref clientsUnreliableBytesSent, reversedData.Length);
 						}
@@ -1341,8 +1325,6 @@ namespace NX {
 
 				int reliableToSend = 0;
 				int unreliableToSend = 0;
-				int reliableSentCount = 0;
-				int unreliableSentCount = 0;
 
 				Task.Factory.StartNew(async() => {
 					bool reliableIncremented = false;
@@ -1352,7 +1334,6 @@ namespace NX {
 						if (reliableToSend > 0) {
 							connection.QueueNotification(messageData, (ushort)messageData.Length);
 							Interlocked.Decrement(ref reliableToSend);
-							Interlocked.Increment(ref reliableSentCount);
 							Interlocked.Increment(ref clientsReliableSent);
 							Interlocked.Add(ref clientsReliableBytesSent, messageData.Length);
 						}
@@ -1360,7 +1341,6 @@ namespace NX {
 						if (unreliableToSend > 0) {
 							connection.SendPayload(reversedData, (ushort)reversedData.Length);
 							Interlocked.Decrement(ref unreliableToSend);
-							Interlocked.Increment(ref unreliableSentCount);
 							Interlocked.Increment(ref clientsUnreliableSent);
 							Interlocked.Add(ref clientsUnreliableBytesSent, reversedData.Length);
 						}
@@ -1468,8 +1448,6 @@ namespace NX {
 
 				int reliableToSend = 0;
 				int unreliableToSend = 0;
-				int reliableSentCount = 0;
-				int unreliableSentCount = 0;
 
 				Task.Factory.StartNew(async() => {
 					bool reliableIncremented = false;
@@ -1479,7 +1457,6 @@ namespace NX {
 						if (reliableToSend > 0) {
 							client.SendBytes(messageData, SendOption.Reliable);
 							Interlocked.Decrement(ref reliableToSend);
-							Interlocked.Increment(ref reliableSentCount);
 							Interlocked.Increment(ref clientsReliableSent);
 							Interlocked.Add(ref clientsReliableBytesSent, messageData.Length);
 						}
@@ -1487,7 +1464,6 @@ namespace NX {
 						if (unreliableToSend > 0) {
 							client.SendBytes(reversedData, SendOption.None);
 							Interlocked.Decrement(ref unreliableToSend);
-							Interlocked.Increment(ref unreliableSentCount);
 							Interlocked.Increment(ref clientsUnreliableSent);
 							Interlocked.Add(ref clientsUnreliableBytesSent, reversedData.Length);
 						}
@@ -1612,8 +1588,6 @@ namespace NX {
 
 				int reliableToSend = 0;
 				int unreliableToSend = 0;
-				int reliableSentCount = 0;
-				int unreliableSentCount = 0;
 
 				Task.Factory.StartNew(async() => {
 					bool reliableIncremented = false;
@@ -1623,7 +1597,6 @@ namespace NX {
 						if (reliableToSend > 0) {
 							client.SendMessage(messageData, true, 2, false);
 							Interlocked.Decrement(ref reliableToSend);
-							Interlocked.Increment(ref reliableSentCount);
 							Interlocked.Increment(ref clientsReliableSent);
 							Interlocked.Add(ref clientsReliableBytesSent, messageData.Length);
 						}
@@ -1631,7 +1604,6 @@ namespace NX {
 						if (unreliableToSend > 0) {
 							client.SendMessage(reversedData, false, 3, false);
 							Interlocked.Decrement(ref unreliableToSend);
-							Interlocked.Increment(ref unreliableSentCount);
 							Interlocked.Increment(ref clientsUnreliableSent);
 							Interlocked.Add(ref clientsUnreliableBytesSent, reversedData.Length);
 						}
@@ -1752,8 +1724,6 @@ namespace NX {
 
 				int reliableToSend = 0;
 				int unreliableToSend = 0;
-				int reliableSentCount = 0;
-				int unreliableSentCount = 0;
 
 				Task.Factory.StartNew(async() => {
 					bool reliableIncremented = false;
@@ -1765,7 +1735,6 @@ namespace NX {
 							reliableMessage.Message = message;
 							client.SendToAll(reliableMessage);
 							Interlocked.Decrement(ref reliableToSend);
-							Interlocked.Increment(ref reliableSentCount);
 							Interlocked.Increment(ref clientsReliableSent);
 							Interlocked.Add(ref clientsReliableBytesSent, messageData.Length);
 						}
@@ -1775,7 +1744,6 @@ namespace NX {
 							unreliableMessage.Message = message;
 							client.SendToAll(unreliableMessage);
 							Interlocked.Decrement(ref unreliableToSend);
-							Interlocked.Increment(ref unreliableSentCount);
 							Interlocked.Increment(ref clientsUnreliableSent);
 							Interlocked.Add(ref clientsUnreliableBytesSent, reversedData.Length);
 						}
@@ -1890,8 +1858,6 @@ namespace NX {
 
 				int reliableToSend = 0;
 				int unreliableToSend = 0;
-				int reliableSentCount = 0;
-				int unreliableSentCount = 0;
 
 				Task.Factory.StartNew(async() => {
 					bool reliableIncremented = false;
@@ -1907,7 +1873,6 @@ namespace NX {
 							}
 
 							Interlocked.Decrement(ref reliableToSend);
-							Interlocked.Increment(ref reliableSentCount);
 							Interlocked.Increment(ref clientsReliableSent);
 							Interlocked.Add(ref clientsReliableBytesSent, messageData.Length);
 						}
@@ -1921,7 +1886,6 @@ namespace NX {
 							}
 
 							Interlocked.Decrement(ref unreliableToSend);
-							Interlocked.Increment(ref unreliableSentCount);
 							Interlocked.Increment(ref clientsUnreliableSent);
 							Interlocked.Add(ref clientsUnreliableBytesSent, reversedData.Length);
 						}
