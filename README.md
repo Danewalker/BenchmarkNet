@@ -54,11 +54,9 @@ When you are going to perform a test with less than 256 simulated clients, it's 
 
 You can use any packet sniffer to monitor how the data is transmitted, but it may affect the results.
 
-If you want to simulate a bad network condition, use [Clumsy](http://jagt.github.io/clumsy/ "Clumsy") as an ideal companion.
-
 Discussion
 --------
-Feel free to join the discussion in the [thread](https://forum.unity.com/threads/benchmarknet-stress-test-for-enet-unet-litenetlib-lidgren-and-miniudp.512507 "thread") on Unity forums.
+You can find the discussion in the [thread](https://forum.unity.com/threads/benchmarknet-stress-test-for-enet-unet-litenetlib-lidgren-and-miniudp.512507 "thread") on Unity forums.
 
 If you have any questions, contact me via [email](mailto:nxrighthere@gmail.com "email").
 
